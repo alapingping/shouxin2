@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.shouxin.shouxin.TFUtils.TFActivity;
+
 public class ModeChoiceActivity extends AppCompatActivity {
 
 
@@ -21,5 +23,7 @@ public class ModeChoiceActivity extends AppCompatActivity {
     }
 
     public void onClickVideoMode(View view) {
+        Intent intent = new Intent(this,TFActivity.class);
+        startActivity(intent);
     }
 }

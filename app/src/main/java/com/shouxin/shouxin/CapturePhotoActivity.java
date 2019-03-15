@@ -12,19 +12,30 @@ import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
+import android.os.MessageQueue;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.shouxin.shouxin.API.Client;
 import com.shouxin.shouxin.API.Service;
+import com.shouxin.shouxin.Recognization.MyClassifer;
+import com.shouxin.shouxin.Recognization.Recognization;
+import com.shouxin.shouxin.TFUtils.TFActivity;
 import com.shouxin.shouxin.Util.PictureToBase64;
+import com.shouxin.shouxin.Util.UpLoader;
+import com.shouxin.shouxin.ternsorflow.Classifier;
+import com.shouxin.shouxin.ternsorflow.TensorFlowImageClassifier;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +48,10 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -44,13 +59,27 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 public class CapturePhotoActivity extends AppCompatActivity {
+    //预览界面对象
     private SurfaceView sView = null;
     private String ipName = null;
+    //预览界面Holder
     private SurfaceHolder sHolder = null;
+    //屏幕尺寸
     private int screenWidth;
     private int screenHeight;
+    //相机对象
     private Camera camera = null;
+
     private boolean isPreview = false;
+
+    //线程池管理
+    private Executor executor;
+    //分类器对象
+    private Classifier classifier;
+    //输出标志
+    private final String TAG = "----this is result:";
+    //输出结果控件
+    TextView result;
     public Camera getCamera() {
 
         return camera;
@@ -71,19 +100,16 @@ public class CapturePhotoActivity extends AppCompatActivity {
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_capture_photo);
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
-        //DisplayMetrics dm = new DisplayMetrics();
-        //getWindowManager().getDefaultDisplay().getMetrics(dm);
-        //screenWidth = dm.widthPixels;
-        //screenHeight = dm.heightPixels;
-
-
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        screenWidth = dm.widthPixels;
+        screenHeight = dm.heightPixels;
         sView = this.findViewById(R.id.surfaceView);
         sHolder = sView.getHolder();
         sHolder.addCallback(new Callback() {
@@ -102,10 +128,11 @@ public class CapturePhotoActivity extends AppCompatActivity {
 //            }
 //        });
     }
+
     private void initCamera(){
         if(!isPreview)
             camera = Camera.open();
-        if(camera!=null && !isPreview){
+        if(camera != null && !isPreview){
             try {
                 Camera.Parameters parameters = camera.getParameters();
                 parameters.setPreviewSize(screenWidth, screenHeight);  //设置预览图像的尺寸大小
@@ -119,24 +146,61 @@ public class CapturePhotoActivity extends AppCompatActivity {
                 } else{
                     parameters.set("orientation", "landscape"); 				      camera.setDisplayOrientation(0);
                 }
+                //开启相机预览界面
                 camera.setPreviewDisplay(sHolder);
+                //设置相机回调接口
                 camera.setPreviewCallback(new StreamIt("xxx"));
+                //正式开始预览
                 camera.startPreview();
-
+                //设置相机自动对焦
                 autoFocusCallback = new AutoFocusCallBack();
                 ((AutoFocusCallBack) autoFocusCallback).setHandler(autoFoucusHandler, autoFocusMessge);
 
             } catch (IOException e) {
 
                 e.printStackTrace();
-
             }
             isPreview = true;
         }
 
+        result = findViewById(R.id.result);
+        Looper.myQueue().addIdleHandler(idleHandler);
     }
-    public void getPermission(){
 
+    /**
+     *  主线程消息队列空闲时（视图第一帧绘制完成时）处理耗时事件
+     */
+    MessageQueue.IdleHandler idleHandler = new MessageQueue.IdleHandler() {
+        @Override
+        public boolean queueIdle() {
+
+            if (classifier == null) {
+                // 创建 Classifier
+                classifier = TensorFlowImageClassifier.create(CapturePhotoActivity.this.getAssets(),
+                        Recognization.MODEL_FILE,
+                        Recognization.LABEL_FILE,
+                        Recognization.INPUT_SIZE,
+                        Recognization.IMAGE_MEAN,
+                        Recognization.IMAGE_STD,
+                        Recognization.INPUT_NAME,
+                        Recognization.OUTPUT_NAME);
+            }
+
+            // 初始化线程池
+            executor = new ScheduledThreadPoolExecutor(1, new ThreadFactory() {
+                @Override
+                public Thread newThread(@NonNull Runnable r) {
+                    Thread thread = new Thread(r);
+                    thread.setDaemon(true);
+                    thread.setName("ThreadPool-ImageClassifier");
+                    return thread;
+                }
+            });
+            return false;
+        }
+    };
+
+    public void getPermission(){
         /**
          * 该方法判定获取权限的结果
          * 若失败，则不能开启摄像头
@@ -152,9 +216,6 @@ public class CapturePhotoActivity extends AppCompatActivity {
         } else {
         }
     }
-
-
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -173,6 +234,116 @@ public class CapturePhotoActivity extends AppCompatActivity {
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             }
     }
+
+    //内部StreamIt类???
+    class StreamIt implements  Camera.PreviewCallback{
+        private String ipname;
+        //帧序号
+        public int frameOrder = 0;
+        public StreamIt(String ipname)
+        {
+            this.ipname  = ipname;
+        }
+
+        @Override
+        public void onPreviewFrame(byte[] data, Camera camera)
+        {
+            frameOrder++;
+            if(frameOrder%100==0){
+                Camera.Size size = camera.getParameters().getPreviewSize();
+                System.out.println(ipname);
+                try {
+                    YuvImage image = new YuvImage(data, ImageFormat.NV21, size.width, size.height, null);
+                    if (image != null) {
+                        ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+                        image.compressToJpeg(new Rect(0, 0, size.width, size.height), 60, outstream);
+                        //新建字节流
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        //压缩图片质量
+                        image.compressToJpeg(new Rect(0,0,size.width,size.height),60,stream);
+                        //将字节流转为位图
+                        Bitmap bmp = BitmapFactory.decodeByteArray(stream.toByteArray(),0,stream.size());
+                        //为图片命名
+                        final String pictureName = String.valueOf(frameOrder) +".jpg";
+                        System.out.println(pictureName);
+                        final InputStream isBm = new ByteArrayInputStream(stream.toByteArray());
+
+                        startImageClassifier(bmp);
+                        //新开线程向服务器上传图片
+//                    new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            new UpLoader().uploadFileAndString("http://39.108.60.40:9050/file",
+//                                    pictureName, isBm);
+//                        }
+//                    }).start();
+
+                        //调用远程api进行识别
+//                    new UpLoader().callRemoteApi(bmp);
+
+                        //saveBitmap(bmp ,picture_name);
+
+                        //将截取的位图进行压缩并喂入分类模型
+
+
+                        stream.flush();
+                    }
+                } catch (Exception e) {
+                    Log.d("---------output:", e.getMessage());
+                }
+            }
+        }
+    }
+
+    //内部自动对焦回调类
+    final class AutoFocusCallBack implements Camera.AutoFocusCallback{
+
+        private Handler handler;
+        private int autoFocusMessage;
+
+        void setHandler(Handler handler, int autoFocusMessage){
+            this.handler = handler;
+            this.autoFocusMessage = autoFocusMessage;
+        }
+        @Override
+        public void onAutoFocus(boolean success, Camera camera) {
+            Log.d("-----callback info:","success");
+            handler.sendEmptyMessageDelayed(autoFocusMessage, 500L);
+        }
+    }
+
+    /**
+     * 开始图片识别匹配
+     * @param bitmap
+     */
+    private void startImageClassifier(final Bitmap bitmap) {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Log.i(TAG, Thread.currentThread().getName() + " startImageClassifier");
+                    Bitmap croppedBitmap = new MyClassifer().getScaleBitmap(bitmap, Recognization.INPUT_SIZE);
+
+                    final List<Classifier.Recognition> results = classifier.recognizeImage(croppedBitmap);
+                    Log.i(TAG, "startImageClassifier results: " + results);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            result.setText(String.format("results: %s", results));
+                        }
+                    });
+                } catch (IOException e) {
+                    Log.e(TAG, "startImageClassifier getScaleBitmap " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+}
+
+
+
 
 
 
@@ -197,165 +368,6 @@ public class CapturePhotoActivity extends AppCompatActivity {
 //
 //        return super.onOptionsItemSelected(item);
 //    }
-}
-class  StreamIt implements  Camera.PreviewCallback{
-    private String ipname;
-    public int count = 0;
-    public StreamIt(String ipname)
-    {
-        this.ipname  = ipname;
-    }
-
-    @Override
-    public void onPreviewFrame(byte[] data, Camera camera)
-    {
-        count++;
-        if(count%100==0){
-            Camera.Size size = camera.getParameters().getPreviewSize();
-            System.out.println(ipname);
-            try {
-                YuvImage image = new YuvImage(data, ImageFormat.NV21, size.width, size.height, null);
-                int pic_name = count - 1;
-                if (image != null) {
-                ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-                image.compressToJpeg(new Rect(0, 0, size.width, size.height), 60, outstream);
-                    //新建字节流
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    //压缩图片质量
-                    image.compressToJpeg(new Rect(0,0,size.width,size.height),60,stream);
-                    //将字节流转为位图
-                    Bitmap bmp = BitmapFactory.decodeByteArray(stream.toByteArray(),0,stream.size());
-                    //为图片命名
-                    final String picture_name = pic_name +".jpg";
-                    System.out.println(picture_name);
-                    final InputStream isBm = new ByteArrayInputStream(stream.toByteArray());
-
-                    uploadFileAndString("http://39.108.60.40:9050/file", picture_name, isBm);//http://192.168.1.130:5000/file
-                    //新开线程向服务器上传图片
-                  new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            uploadFileAndString("http://39.108.60.40:9050/file",
-                                    picture_name, isBm);
-                        }
-                    }).start();
-
-                    //调用远程api进行识别
-//                    callRemoteApi(bmp);
-
-                    //saveBitmap(bmp ,picture_name);
-                    System.out.println(bmp);
-                    pic_name = pic_name + 1;
-                    stream.flush();
-                }
-            } catch (Exception e) {
-                Log.d("---------output:", e.getMessage());
-            }
-        }
-    }
-
-    private void uploadFileAndString(String actionUrl, String newName, InputStream ffStream) {
-        String end = "\r\n";
-        String twoHyphens = "--";
-        String boundary = "*****";
-        //Handler handler = new Handler();
-        try {
-            URL url = new URL(actionUrl);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            /* 允许Input、Output，不使用Cache */
-            con.setDoInput(true);
-            con.setDoOutput(true);
-            con.setUseCaches(false);
-            /* 设置传送的method=POST */
-            con.setRequestMethod("POST");
-            /* setRequestProperty */
-            con.setRequestProperty("Connection", "Keep-Alive");
-            con.setRequestProperty("Charset", "UTF-8");
-            con.setRequestProperty("Content-Type",
-                    "multipart/form-data;boundary=" + boundary);
-            /* 设置DataOutputStream */
-            DataOutputStream ds = new DataOutputStream(con.getOutputStream());
-            ds.writeBytes(twoHyphens + boundary + end);
-            ds.writeBytes("Content-Disposition: form-data; "
-                    + "name=\"userfile\";filename=\"" + newName + "\"" + end);
-            ds.writeBytes(end);
-
-            /* 取得文件的FileInputStream */
-            InputStream fStream = ffStream;
-            /* 设置每次写入1024bytes */
-            int bufferSize = 1024;
-            byte[] buffer = new byte[bufferSize];
-
-            int length = -1;
-            /* 从文件读取数据至缓冲区 */
-            while ((length = fStream.read(buffer)) != -1) {
-                /* 将资料写入DataOutputStream中 */
-                ds.write(buffer, 0, length);
-            }
-            ds.writeBytes(end);
-
-            // -----
-            ds.writeBytes(twoHyphens + boundary + end);
-            ds.writeBytes("Content-Disposition: form-data;name=\"name\"" + end);
-            ds.writeBytes(end + URLEncoder.encode("xiexiezhichi", "UTF-8")
-                    + end);
-            // -----
-
-            ds.writeBytes(twoHyphens + boundary + twoHyphens + end);
-            /* close streams */
-            fStream.close();
-            ds.flush();
-
-            /* 取得Response内容 */
-            InputStream is = con.getInputStream();
-            int ch;
-            StringBuffer b = new StringBuffer();
-            while ((ch = is.read()) != -1) {
-                b.append((char) ch);
-            }
-            //handler.sendEmptyMessage(0x12);
-            /* 关闭DataOutputStream */
-            ds.close();
-        } catch (Exception e) {
-            // handler.sendEmptyMessage(0x13);
-        }
-    }
-
-    public void callRemoteApi(Bitmap bmp) throws JSONException {
-        //使用retrofit调用百度api
-        String access_token = "24.ddfb06c45e8ba9fe5043dbd9581b4280.2592000.1553944820.282335-15644269";
-        String base64OfPicture = PictureToBase64.bitmapToBase64(bmp);
-        Service service = Client.retrofit.create(Service.class);
-        //构造请求体
-        JSONObject info = new JSONObject();
-        info.put("image",base64OfPicture);
-        info.put("top_num",5);
-        //转换为RequestBody
-        RequestBody body= RequestBody.create(okhttp3.MediaType.parse("application/json"), info.toString());
-        //异步调用
-        Call<ResponseBody> call = service.UploadPicture("shouxin",access_token,body);
-        call.enqueue(new retrofit2.Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if(response.isSuccessful()){
-                    try {
-                        String result = response.body().string();
-                        JSONObject jsonObject = new JSONObject(result);
-                        Log.d("---------output:", jsonObject.getJSONArray("results").getJSONObject(0).get("name").toString());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("---------failure:", t.getMessage());
-            }
-        });
-    }
 
 
 //    public void saveBitmap() {
@@ -377,21 +389,3 @@ class  StreamIt implements  Camera.PreviewCallback{
 //        }
 //
 //    }
-
-}
-
-final class AutoFocusCallBack implements Camera.AutoFocusCallback{
-
-    private Handler handler;
-    private int autoFocusMessage;
-
-    void setHandler(Handler handler, int autoFocusMessage){
-        this.handler = handler;
-        this.autoFocusMessage = autoFocusMessage;
-    }
-    @Override
-    public void onAutoFocus(boolean success, Camera camera) {
-        Log.d("-----callback info:","success");
-        handler.sendEmptyMessageDelayed(autoFocusMessage, 500L);
-    }
-}
