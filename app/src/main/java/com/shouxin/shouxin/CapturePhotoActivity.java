@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
@@ -263,12 +264,21 @@ public class CapturePhotoActivity extends AppCompatActivity {
                         image.compressToJpeg(new Rect(0,0,size.width,size.height),60,stream);
                         //将字节流转为位图
                         Bitmap bmp = BitmapFactory.decodeByteArray(stream.toByteArray(),0,stream.size());
+
+                        Matrix matrix = new Matrix();
+                        matrix.postRotate((float)90.0);
+                        Bitmap rotaBitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, false);
+                        Bitmap sizeBitmap = Bitmap.createScaledBitmap(rotaBitmap, 540, 800, true);
+                        Bitmap rectBmp = Bitmap.createBitmap(sizeBitmap,75,250,400,400);
+
                         //为图片命名
                         final String pictureName = String.valueOf(frameOrder) +".jpg";
                         System.out.println(pictureName);
                         final InputStream isBm = new ByteArrayInputStream(stream.toByteArray());
 
-                        startImageClassifier(bmp);
+
+
+
                         //新开线程向服务器上传图片
 //                    new Thread(new Runnable() {
 //                        @Override
@@ -284,7 +294,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
                         //saveBitmap(bmp ,picture_name);
 
                         //将截取的位图进行压缩并喂入分类模型
-
+                        startImageClassifier(rectBmp);
 
                         stream.flush();
                     }
@@ -339,6 +349,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
             }
         });
     }
+
 
 }
 

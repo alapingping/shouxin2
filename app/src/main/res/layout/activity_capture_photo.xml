@@ -9,8 +9,17 @@
     <include layout="@layout/content_main" />
 
     <TextView
+        android:id="@+id/frame"
+        android:layout_marginTop="230dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginLeft="80dp"
+        android:background="@drawable/linecolor"
+        />
+
+    <TextView
         android:id="@+id/result"
-        android:layout_marginTop="500dp"
+        android:layout_marginTop="620dp"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_marginBottom="10dp" />
