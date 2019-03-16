@@ -249,7 +249,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
         public void onPreviewFrame(byte[] data, Camera camera)
         {
             frameOrder++;
-            if(frameOrder%100==0){
+            if(frameOrder%50==0 || frameOrder == 0){
                 Camera.Size size = camera.getParameters().getPreviewSize();
                 System.out.println(ipname);
                 try {
