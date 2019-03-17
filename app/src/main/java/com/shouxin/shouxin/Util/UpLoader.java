@@ -113,7 +113,7 @@ public class UpLoader {
                     try {
                         String result = response.body().string();
                         JSONObject jsonObject = new JSONObject(result);
-                        Log.d("---------output:", jsonObject.getJSONArray("results").getJSONObject(0).get("name").toString());
+                        Log.d("--Baidu-output:", jsonObject.getJSONArray("results").getJSONObject(0).get("name").toString());
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (JSONException e) {
@@ -130,7 +130,7 @@ public class UpLoader {
     }
 
     public void saveBitmap(Bitmap bm, String picName) {
-        File f = new File("/sdcard/", picName);
+        File f = new File("/sdcard/trainset/", picName);
         if (f.exists()) {
             f.delete();
         }

@@ -1,6 +1,8 @@
 package com.shouxin.shouxin;
 
 import android.Manifest;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -10,15 +12,21 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
+import android.icu.lang.UProperty;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.MessageQueue;
+import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -32,6 +40,7 @@ import com.shouxin.shouxin.API.Client;
 import com.shouxin.shouxin.API.Service;
 import com.shouxin.shouxin.Recognization.MyClassifer;
 import com.shouxin.shouxin.Recognization.Recognization;
+import com.shouxin.shouxin.TFUtils.FileUtil;
 import com.shouxin.shouxin.TFUtils.TFActivity;
 import com.shouxin.shouxin.Util.PictureToBase64;
 import com.shouxin.shouxin.Util.UpLoader;
@@ -44,11 +53,15 @@ import org.json.JSONObject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -85,6 +98,16 @@ public class CapturePhotoActivity extends AppCompatActivity {
 
         return camera;
     }
+
+    private static final int OPEN_SETTING_REQUEST_COED = 110;
+    private static final int TAKE_PHOTO_REQUEST_CODE = 120;
+    private static final int PICTURE_REQUEST_CODE = 911;
+
+    private static final int PERMISSIONS_REQUEST = 108;
+    private static final int CAMERA_PERMISSIONS_REQUEST_CODE = 119;
+
+    private static final String CURRENT_TAKE_PHOTO_URI = "currentTakePhotoUri";
+
 
     //处理对焦所用变量
     //对焦消息类型
@@ -197,6 +220,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
                     return thread;
                 }
             });
+            requestMultiplePermissions();
             return false;
         }
     };
@@ -218,23 +242,23 @@ public class CapturePhotoActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-            switch (requestCode) {
-            //就像onActivityResult一样这个地方就是判断你是从哪来的。
-            case 222:
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            // Permission Granted
-            } else {
-            // Permission Denied
-                Toast.makeText(getApplicationContext(), "相机开启失败", Toast.LENGTH_SHORT)
-                    .show();
-            }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-            }
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+//            switch (requestCode) {
+//            //就像onActivityResult一样这个地方就是判断你是从哪来的。
+//            case 222:
+//            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//            // Permission Granted
+//            } else {
+//            // Permission Denied
+//                Toast.makeText(getApplicationContext(), "相机开启失败", Toast.LENGTH_SHORT)
+//                    .show();
+//            }
+//                break;
+//            default:
+//                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//            }
+//    }
 
     //内部StreamIt类???
     class StreamIt implements  Camera.PreviewCallback{
@@ -250,35 +274,39 @@ public class CapturePhotoActivity extends AppCompatActivity {
         public void onPreviewFrame(byte[] data, Camera camera)
         {
             frameOrder++;
-            if(frameOrder%50==0 || frameOrder == 0){
+            if(frameOrder%30==0 || frameOrder == 0){
                 Camera.Size size = camera.getParameters().getPreviewSize();
                 System.out.println(ipname);
                 try {
                     YuvImage image = new YuvImage(data, ImageFormat.NV21, size.width, size.height, null);
                     if (image != null) {
-                        ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-                        image.compressToJpeg(new Rect(0, 0, size.width, size.height), 60, outstream);
+//                        ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+//                        image.compressToJpeg(new Rect(0, 0, size.width, size.height), 60, outstream);
                         //新建字节流
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         //压缩图片质量
-                        image.compressToJpeg(new Rect(0,0,size.width,size.height),60,stream);
+                        image.compressToJpeg(new Rect(0,0,size.width,size.height),100,stream);
                         //将字节流转为位图
                         Bitmap bmp = BitmapFactory.decodeByteArray(stream.toByteArray(),0,stream.size());
 
                         Matrix matrix = new Matrix();
                         matrix.postRotate((float)90.0);
                         Bitmap rotaBitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, false);
-                        Bitmap sizeBitmap = Bitmap.createScaledBitmap(rotaBitmap, 540, 800, true);
-                        Bitmap rectBmp = Bitmap.createBitmap(sizeBitmap,75,250,400,400);
+                        Bitmap sizeBitmap = Bitmap.createScaledBitmap(rotaBitmap, 600, 800, true);
+                        Bitmap rectBmp = Bitmap.createBitmap(sizeBitmap,75,250,224,224);
 
                         //为图片命名
-                        final String pictureName = String.valueOf(frameOrder) +".jpg";
+                        final String pictureName = String.valueOf(System.currentTimeMillis()) +".jpg";
                         System.out.println(pictureName);
                         final InputStream isBm = new ByteArrayInputStream(stream.toByteArray());
 
+//                        UpLoader upLoader = new UpLoader();
+//                        upLoader.saveBitmap(sizeBitmap, "before.png");
+//                        upLoader.saveBitmap(rectBmp, "after.png");
 
-
-
+                        FileInputStream fis = new FileInputStream("/sdcard/trainset/after.png");
+                        Bitmap testBmp = BitmapFactory.decodeStream(fis);
+                        startImageClassifier(testBmp);
                         //新开线程向服务器上传图片
 //                    new Thread(new Runnable() {
 //                        @Override
@@ -289,12 +317,12 @@ public class CapturePhotoActivity extends AppCompatActivity {
 //                    }).start();
 
                         //调用远程api进行识别
-//                    new UpLoader().callRemoteApi(bmp);
+//                    new UpLoader().callRemoteApi(rectBmp);
 
                         //saveBitmap(bmp ,picture_name);
 
                         //将截取的位图进行压缩并喂入分类模型
-                        startImageClassifier(rectBmp);
+//                        startImageClassifier(rectBmp);
 
                         stream.flush();
                     }
@@ -333,6 +361,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
                 try {
                     Log.i(TAG, Thread.currentThread().getName() + " startImageClassifier");
                     Bitmap croppedBitmap = new MyClassifer().getScaleBitmap(bitmap, Recognization.INPUT_SIZE);
+                    new UpLoader().saveBitmap(croppedBitmap, "new.png");
 
                     final List<Classifier.Recognition> results = classifier.recognizeImage(croppedBitmap);
                     Log.i(TAG, "startImageClassifier results: " + results);
@@ -349,6 +378,170 @@ public class CapturePhotoActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void requestMultiplePermissions() {
+
+        String storagePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+        String cameraPermission = Manifest.permission.CAMERA;
+
+        int hasStoragePermission = ActivityCompat.checkSelfPermission(this, storagePermission);
+        int hasCameraPermission = ActivityCompat.checkSelfPermission(this, cameraPermission);
+
+        List<String> permissions = new ArrayList<>();
+        if (hasStoragePermission != PackageManager.PERMISSION_GRANTED) {
+            permissions.add(storagePermission);
+        }
+
+        if (hasCameraPermission != PackageManager.PERMISSION_GRANTED) {
+            permissions.add(cameraPermission);
+        }
+
+        if (!permissions.isEmpty()) {
+            String[] params = permissions.toArray(new String[permissions.size()]);
+            ActivityCompat.requestPermissions(this, params, PERMISSIONS_REQUEST);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
+    {
+        if (requestCode == PERMISSIONS_REQUEST) {
+            if (Manifest.permission.WRITE_EXTERNAL_STORAGE.equals(permissions[0]) && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                //permission denied 显示对话框告知用户必须打开权限 (storagePermission )
+                // Should we show an explanation?
+                // 当app完全没有机会被授权的时候，调用shouldShowRequestPermissionRationale() 返回false
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    // 系统弹窗提示授权
+                    showNeedStoragePermissionDialog();
+                } else {
+                    // 已经被禁止的状态，比如用户在权限对话框中选择了"不再显示”，需要自己弹窗解释
+                    showMissingStoragePermissionDialog();
+                }
+            }
+        } else if (requestCode == CAMERA_PERMISSIONS_REQUEST_CODE) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                showNeedCameraPermissionDialog();
+            } else {
+                openSystemCamera();
+            }
+        }
+    }
+
+    /**
+     *  显示缺失权限提示，可再次请求动态权限
+     */
+    private void showNeedStoragePermissionDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("权限获取提示")
+                .setMessage("必须要有存储权限才能获取到图片")
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions(CapturePhotoActivity.this,
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST);
+                    }
+                }).setCancelable(false)
+                .show();
+    }
+
+
+    /**
+     *  显示权限被拒提示，只能进入设置手动改
+     */
+    private void showMissingStoragePermissionDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("权限获取失败")
+                .setMessage("必须要有存储权限才能正常运行")
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int which) {
+                        CapturePhotoActivity.this.finish();
+                    }
+                })
+                .setPositiveButton("去设置", new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int which) {
+                        startAppSettings();
+                    }
+                })
+                .setCancelable(false)
+                .show();
+    }
+
+    private void showNeedCameraPermissionDialog() {
+        new AlertDialog.Builder(this)
+                .setMessage("摄像头权限被关闭，请开启权限后重试")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create().show();
+    }
+
+    private static final String PACKAGE_URL_SCHEME = "package:";
+
+    /**
+     * 启动应用的设置进行授权
+     */
+    private void startAppSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        intent.setData(Uri.parse(PACKAGE_URL_SCHEME + getPackageName()));
+        startActivityForResult(intent, OPEN_SETTING_REQUEST_COED);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            if (requestCode == PICTURE_REQUEST_CODE) {
+                // 处理选择的图片
+//                handleInputPhoto(data.getData());
+            } else if (requestCode == OPEN_SETTING_REQUEST_COED){
+                requestMultiplePermissions();
+            } else if (requestCode == TAKE_PHOTO_REQUEST_CODE) {
+                // 如果拍照成功，加载图片并识别
+//                handleInputPhoto(currentTakePhotoUri);
+            }
+        }
+    }
+
+    /**
+     * 打开系统相机
+     */
+    private void openSystemCamera() {
+        //调用系统相机
+        Intent takePhotoIntent = new Intent();
+        takePhotoIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        //这句作用是如果没有相机则该应用不会闪退，要是不加这句则当系统没有相机应用的时候该应用会闪退
+        if (takePhotoIntent.resolveActivity(getPackageManager()) == null) {
+            Toast.makeText(this, "当前系统没有可用的相机应用", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+//        String fileName = "TF_" + System.currentTimeMillis() + ".jpg";
+//        File photoFile = new File(FileUtil.getPhotoCacheFolder(), fileName);
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            //通过FileProvider创建一个content类型的Uri
+//            currentTakePhotoUri = FileProvider.getUriForFile(this, "gdut.bsx.tensorflowtraining.fileprovider", photoFile);
+//            //对目标应用临时授权该 Uri 所代表的文件
+//            takePhotoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//        } else {
+//            currentTakePhotoUri = Uri.fromFile(photoFile);
+//        }
+//
+//        //将拍照结果保存至 outputFile 的Uri中，不保留在相册中
+//        takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, currentTakePhotoUri);
+        startActivityForResult(takePhotoIntent, TAKE_PHOTO_REQUEST_CODE);
+    }
+
 
 
 }

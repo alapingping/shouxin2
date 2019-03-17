@@ -14,8 +14,8 @@ public interface Recognization {
     String OUTPUT_NAME = "final_result";
 //    String LABEL_FILE = "file:///android_asset/model/imagenet_comp_graph_label_strings.txt";
 //    String MODEL_FILE = "file:///android_asset/model/tensorflow_inception_graph.pb";
-    String LABEL_FILE = "file:///android_asset/model/retrained_labels_rec.txt";
-    String MODEL_FILE = "file:///android_asset/model/retrained_graph_rec.pb";
+    String LABEL_FILE = "file:///android_asset/model/retrained_labels.txt";
+    String MODEL_FILE = "file:///android_asset/model/retrained_graph.pb";
 
 //    String INPUT_NAME = "Mul";
 //    String OUTPUT_NAME = "final_result";
