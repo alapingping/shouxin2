@@ -10,18 +10,31 @@
 
     <TextView
         android:id="@+id/frame"
-        android:layout_marginTop="240dp"
-        android:layout_width="140dp"
-        android:layout_height="140dp"
+        android:layout_marginTop="230dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:layout_marginLeft="55dp"
         android:background="@drawable/linecolor"
         />
 
     <TextView
         android:id="@+id/result"
-        android:layout_marginTop="620dp"
+        android:layout_marginTop="600dp"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_marginBottom="10dp" />
+
+    <TextView
+        android:id="@+id/sentence"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginBottom="10dp" />
+
+    <Button
+        android:id="@+id/displayrst"
+        android:layout_marginTop="500dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp" />
 
 </android.support.design.widget.CoordinatorLayout>

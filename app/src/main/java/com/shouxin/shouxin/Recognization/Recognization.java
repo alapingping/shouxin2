@@ -9,7 +9,7 @@ public interface Recognization {
     //
     int INPUT_SIZE = 224;
     int IMAGE_MEAN = 128;
-    float IMAGE_STD = 1;
+    float IMAGE_STD = 128;
     String INPUT_NAME = "input";
     String OUTPUT_NAME = "final_result";
 //    String LABEL_FILE = "file:///android_asset/model/imagenet_comp_graph_label_strings.txt";

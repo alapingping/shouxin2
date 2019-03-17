@@ -33,6 +33,8 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -94,6 +96,11 @@ public class CapturePhotoActivity extends AppCompatActivity {
     private final String TAG = "----this is result:";
     //输出结果控件
     TextView result;
+    //拼接结果
+    TextView sentence;
+
+    Button displaybtn;
+
     public Camera getCamera() {
 
         return camera;
@@ -107,7 +114,6 @@ public class CapturePhotoActivity extends AppCompatActivity {
     private static final int CAMERA_PERMISSIONS_REQUEST_CODE = 119;
 
     private static final String CURRENT_TAKE_PHOTO_URI = "currentTakePhotoUri";
-
 
     //处理对焦所用变量
     //对焦消息类型
@@ -123,6 +129,11 @@ public class CapturePhotoActivity extends AppCompatActivity {
             }
         }
     };
+
+    //存放结果集
+    private ArrayList<String> wordSet;
+    //词语出现次数
+    private int appearTimes = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +162,18 @@ public class CapturePhotoActivity extends AppCompatActivity {
 //
 //            }
 //        });
+        wordSet = new ArrayList<>();
+        displaybtn = findViewById(R.id.displayrst);
+        displaybtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sentence.setText(wordSet.toString());
+                wordSet = new ArrayList<>();
+            }
+        });
+
+        sentence = findViewById(R.id.sentence);
+        result = findViewById(R.id.result);
     }
 
     private void initCamera(){
@@ -187,7 +210,6 @@ public class CapturePhotoActivity extends AppCompatActivity {
             isPreview = true;
         }
 
-        result = findViewById(R.id.result);
         Looper.myQueue().addIdleHandler(idleHandler);
     }
 
@@ -280,12 +302,10 @@ public class CapturePhotoActivity extends AppCompatActivity {
                 try {
                     YuvImage image = new YuvImage(data, ImageFormat.NV21, size.width, size.height, null);
                     if (image != null) {
-//                        ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-//                        image.compressToJpeg(new Rect(0, 0, size.width, size.height), 60, outstream);
                         //新建字节流
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         //压缩图片质量
-                        image.compressToJpeg(new Rect(0,0,size.width,size.height),100,stream);
+                        image.compressToJpeg(new Rect(0,0,size.width,size.height),60,stream);
                         //将字节流转为位图
                         Bitmap bmp = BitmapFactory.decodeByteArray(stream.toByteArray(),0,stream.size());
 
@@ -293,20 +313,17 @@ public class CapturePhotoActivity extends AppCompatActivity {
                         matrix.postRotate((float)90.0);
                         Bitmap rotaBitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, false);
                         Bitmap sizeBitmap = Bitmap.createScaledBitmap(rotaBitmap, 600, 800, true);
-                        Bitmap rectBmp = Bitmap.createBitmap(sizeBitmap,75,250,224,224);
+                        Bitmap rectBmp = Bitmap.createBitmap(sizeBitmap,75,250,400,400);
 
-                        //为图片命名
-                        final String pictureName = String.valueOf(System.currentTimeMillis()) +".jpg";
-                        System.out.println(pictureName);
+                        String pictureName = String.valueOf(System.currentTimeMillis()) + ".jpg";
                         final InputStream isBm = new ByteArrayInputStream(stream.toByteArray());
 
 //                        UpLoader upLoader = new UpLoader();
 //                        upLoader.saveBitmap(sizeBitmap, "before.png");
-//                        upLoader.saveBitmap(rectBmp, "after.png");
+//                        upLoader.saveBitmap(rectBmp, pictureName);
 
-                        FileInputStream fis = new FileInputStream("/sdcard/trainset/after.png");
-                        Bitmap testBmp = BitmapFactory.decodeStream(fis);
-                        startImageClassifier(testBmp);
+//                        FileInputStream fis = new FileInputStream("/sdcard/trainset/after.png");
+//                        Bitmap testBmp = BitmapFactory.decodeStream(fis);
                         //新开线程向服务器上传图片
 //                    new Thread(new Runnable() {
 //                        @Override
@@ -322,7 +339,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
                         //saveBitmap(bmp ,picture_name);
 
                         //将截取的位图进行压缩并喂入分类模型
-//                        startImageClassifier(rectBmp);
+                        startImageClassifier(rectBmp);
 
                         stream.flush();
                     }
@@ -369,6 +386,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             result.setText(String.format("results: %s", results));
+                            WordJoint(results.get(0).getTitle());
                         }
                     });
                 } catch (IOException e) {
@@ -542,7 +560,36 @@ public class CapturePhotoActivity extends AppCompatActivity {
         startActivityForResult(takePhotoIntent, TAKE_PHOTO_REQUEST_CODE);
     }
 
+    public void WordJoint(String word){
+        //如果结果集为空,则将词语加入
+        if(wordSet.size() == 0){
+            wordSet.add(word);
+            return;
+        }
+        //如果结果集不为空,且该词语与上一个词语相同,则舍弃该词
+        if(word.equals(wordSet.get(wordSet.size() - 1))){
+            appearTimes++;
+            return;
+        }
+        //如果该词语与上一个词语不同,且上一个词语的次数为1
+        //则取代上一个词语,并清除标志位
+        if(!word.equals(wordSet.get(wordSet.size() - 1)) && appearTimes == 1){
+            wordSet.remove(wordSet.size() - 1);
+            wordSet.add(word);
+            appearTimes = 1;
+            return;
+        }
 
+        //如果该词语与上一个词语不同,且上一个词语的次数不为1
+        //则将该词语加入结果集
+        if(!word.equals(wordSet.get(wordSet.size() - 1)) && appearTimes > 1){
+            wordSet.add(word);
+            appearTimes = 1;
+            return;
+        }
+
+
+    }
 
 }
 
