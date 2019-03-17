@@ -56,7 +56,9 @@ public class TakeTrainSetActivity extends AppCompatActivity {
 
     TextView pictureOrderText;
 
-    Button displaybtn;
+    Button stopBtn;
+    Button beginBtn;
+    Button pauseBtn;
 
     public Camera getCamera() {
         return camera;
@@ -77,6 +79,8 @@ public class TakeTrainSetActivity extends AppCompatActivity {
         }
     };
 
+    private boolean beginTakePhoto = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,13 +99,39 @@ public class TakeTrainSetActivity extends AppCompatActivity {
             @Override			public void surfaceChanged(SurfaceHolder holder, int format, int width,					int height) {										}		});
 
         pictureOrderText = findViewById(R.id.order);
-        displaybtn = findViewById(R.id.displayrst);
-        displaybtn.setOnClickListener(new View.OnClickListener() {
+
+        beginBtn = findViewById(R.id.begin);
+        beginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                beginTakePhoto = true;
+                beginBtn.setClickable(false);
+                pauseBtn.setClickable(true);
+                beginBtn.setBackgroundColor(getResources().getColor(R.color.colorHalfTransparentBlack));
+                pauseBtn.setBackgroundColor(getResources().getColor(R.color.colorAquaDark));
+            }
+        });
+
+        pauseBtn = findViewById(R.id.pause);
+        pauseBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                beginTakePhoto = false;
+                beginBtn.setClickable(true);
+                pauseBtn.setClickable(false);
+                beginBtn.setBackgroundColor(getResources().getColor(R.color.colorMint));
+                pauseBtn.setBackgroundColor(getResources().getColor(R.color.colorHalfTransparentBlack));
+            }
+        });
+
+        stopBtn = findViewById(R.id.stop);
+        stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
+
 
     }
 
@@ -153,39 +183,40 @@ public class TakeTrainSetActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onPreviewFrame(byte[] data, Camera camera)
-        {
-            frameOrder++;
-            if(frameOrder%30==0 || frameOrder == 0){
-                Camera.Size size = camera.getParameters().getPreviewSize();
-                System.out.println(ipname);
-                try {
-                    YuvImage image = new YuvImage(data, ImageFormat.NV21, size.width, size.height, null);
-                    if (image != null) {
-                        //新建字节流
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        //压缩图片质量
-                        image.compressToJpeg(new Rect(0,0,size.width,size.height),60,stream);
-                        //将字节流转为位图
-                        Bitmap bmp = BitmapFactory.decodeByteArray(stream.toByteArray(),0,stream.size());
+        public void onPreviewFrame(byte[] data, Camera camera) {
+            if (beginTakePhoto == true) {
+                frameOrder++;
+                if (frameOrder % 30 == 0 || frameOrder == 0) {
+                    Camera.Size size = camera.getParameters().getPreviewSize();
+                    System.out.println(ipname);
+                    try {
+                        YuvImage image = new YuvImage(data, ImageFormat.NV21, size.width, size.height, null);
+                        if (image != null) {
+                            //新建字节流
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            //压缩图片质量
+                            image.compressToJpeg(new Rect(0, 0, size.width, size.height), 60, stream);
+                            //将字节流转为位图
+                            Bitmap bmp = BitmapFactory.decodeByteArray(stream.toByteArray(), 0, stream.size());
 
-                        Matrix matrix = new Matrix();
-                        matrix.postRotate((float)90.0);
-                        Bitmap rotaBitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, false);
-                        Bitmap sizeBitmap = Bitmap.createScaledBitmap(rotaBitmap, 600, 800, true);
-                        Bitmap rectBmp = Bitmap.createBitmap(sizeBitmap,75,250,400,400);
+                            Matrix matrix = new Matrix();
+                            matrix.postRotate((float) 90.0);
+                            Bitmap rotaBitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, false);
+                            Bitmap sizeBitmap = Bitmap.createScaledBitmap(rotaBitmap, 600, 800, true);
+                            Bitmap rectBmp = Bitmap.createBitmap(sizeBitmap, 75, 250, 400, 400);
 
-                        String pictureName = String.valueOf(System.currentTimeMillis()) + ".jpg";
-                        final InputStream isBm = new ByteArrayInputStream(stream.toByteArray());
+                            String pictureName = String.valueOf(System.currentTimeMillis()) + ".jpg";
+                            final InputStream isBm = new ByteArrayInputStream(stream.toByteArray());
 
-                        UpLoader upLoader = new UpLoader();
-                        upLoader.saveBitmap(rectBmp, pictureName);
-                        pictureOrderText.setText("当前图片序号:" + String.valueOf((frameOrder/30) + 1));
+                            UpLoader upLoader = new UpLoader();
+                            upLoader.saveBitmap(rectBmp, pictureName);
+                            pictureOrderText.setText("当前图片序号:" + String.valueOf((frameOrder / 30) + 1));
 
-                        stream.flush();
+                            stream.flush();
+                        }
+                    } catch (Exception e) {
+                        Log.d("---------output:", e.getMessage());
                     }
-                } catch (Exception e) {
-                    Log.d("---------output:", e.getMessage());
                 }
             }
         }

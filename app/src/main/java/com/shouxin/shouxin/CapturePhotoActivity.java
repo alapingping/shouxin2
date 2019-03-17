@@ -158,7 +158,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
         displaybtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sentence.setText(wordSet.toString());
+                sentence.setText("当前结果:" + wordSet.toString());
                 wordSet = new ArrayList<>();
             }
         });
@@ -289,7 +289,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
                         Bitmap rectBmp = Bitmap.createBitmap(sizeBitmap,75,250,400,400);
 
                         String pictureName = String.valueOf(System.currentTimeMillis()) + ".jpg";
-                        final InputStream isBm = new ByteArrayInputStream(stream.toByteArray());
+//                        final InputStream isBm = new ByteArrayInputStream(stream.toByteArray());
 
 //                        UpLoader upLoader = new UpLoader();
 //                        upLoader.saveBitmap(sizeBitmap, "before.png");
@@ -371,6 +371,12 @@ public class CapturePhotoActivity extends AppCompatActivity {
     }
 
     public void WordJoint(String word){
+
+        //如果当前存入词语过长,则自动将其输出
+        if(wordSet.size() > 20){
+            sentence.setText("当前结果:" + wordSet.toString());
+            wordSet = new ArrayList<>();
+        }
         //如果结果集为空,则将词语加入
         if(wordSet.size() == 0){
             wordSet.add(word);
@@ -405,7 +411,6 @@ public class CapturePhotoActivity extends AppCompatActivity {
             appearTimes = 1;
             return;
         }
-
 
     }
 

@@ -17,17 +17,45 @@
         android:background="@drawable/linecolor"/>
 
     <TextView
+        android:gravity="center"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="50dp"
         android:id="@+id/order"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"/>
+        android:layout_height="40dp"
+        android:text="@string/initOrder"/>
 
-    <Button
-        android:id="@+id/displayrst"
+    <GridLayout
         android:layout_marginTop="600dp"
-        android:layout_width="100dp"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:text="@string/stop"/>
+        android:layout_weight="1"
+        android:columnCount="3"
+        android:rowCount="1">
+
+        <Button
+            android:id="@+id/begin"
+            android:text="@string/begin"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@color/colorMint"/>
+
+        <Button
+            android:id="@+id/pause"
+            android:clickable="false"
+            android:text="@string/pause"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@color/colorHalfTransparentBlack"/>
+
+        <Button
+            android:id="@+id/stop"
+            android:text="@string/stop"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@color/colorBitterSweetDark"/>
+
+    </GridLayout>
+
+
 </android.support.design.widget.CoordinatorLayout>
