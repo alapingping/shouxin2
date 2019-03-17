@@ -106,15 +106,6 @@ public class CapturePhotoActivity extends AppCompatActivity {
         return camera;
     }
 
-    private static final int OPEN_SETTING_REQUEST_COED = 110;
-    private static final int TAKE_PHOTO_REQUEST_CODE = 120;
-    private static final int PICTURE_REQUEST_CODE = 911;
-
-    private static final int PERMISSIONS_REQUEST = 108;
-    private static final int CAMERA_PERMISSIONS_REQUEST_CODE = 119;
-
-    private static final String CURRENT_TAKE_PHOTO_URI = "currentTakePhotoUri";
-
     //处理对焦所用变量
     //对焦消息类型
     private int autoFocusMessge = 1001;
@@ -242,27 +233,9 @@ public class CapturePhotoActivity extends AppCompatActivity {
                     return thread;
                 }
             });
-            requestMultiplePermissions();
             return false;
         }
     };
-
-    public void getPermission(){
-        /**
-         * 该方法判定获取权限的结果
-         * 若失败，则不能开启摄像头
-         * 若成功，则正确开启摄像头
-         */
-        if (Build.VERSION.SDK_INT >= 23) {
-            int checkCallPhonePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-            if(checkCallPhonePermission != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.CAMERA},222);
-                return;
-            }else{
-            }
-        } else {
-        }
-    }
 
 //    @Override
 //    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -324,7 +297,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
 
 //                        FileInputStream fis = new FileInputStream("/sdcard/trainset/after.png");
 //                        Bitmap testBmp = BitmapFactory.decodeStream(fis);
-                        //新开线程向服务器上传图片
+//                        新开线程向服务器上传图片
 //                    new Thread(new Runnable() {
 //                        @Override
 //                        public void run() {
@@ -397,169 +370,6 @@ public class CapturePhotoActivity extends AppCompatActivity {
         });
     }
 
-    private void requestMultiplePermissions() {
-
-        String storagePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-        String cameraPermission = Manifest.permission.CAMERA;
-
-        int hasStoragePermission = ActivityCompat.checkSelfPermission(this, storagePermission);
-        int hasCameraPermission = ActivityCompat.checkSelfPermission(this, cameraPermission);
-
-        List<String> permissions = new ArrayList<>();
-        if (hasStoragePermission != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(storagePermission);
-        }
-
-        if (hasCameraPermission != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(cameraPermission);
-        }
-
-        if (!permissions.isEmpty()) {
-            String[] params = permissions.toArray(new String[permissions.size()]);
-            ActivityCompat.requestPermissions(this, params, PERMISSIONS_REQUEST);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
-    {
-        if (requestCode == PERMISSIONS_REQUEST) {
-            if (Manifest.permission.WRITE_EXTERNAL_STORAGE.equals(permissions[0]) && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                //permission denied 显示对话框告知用户必须打开权限 (storagePermission )
-                // Should we show an explanation?
-                // 当app完全没有机会被授权的时候，调用shouldShowRequestPermissionRationale() 返回false
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    // 系统弹窗提示授权
-                    showNeedStoragePermissionDialog();
-                } else {
-                    // 已经被禁止的状态，比如用户在权限对话框中选择了"不再显示”，需要自己弹窗解释
-                    showMissingStoragePermissionDialog();
-                }
-            }
-        } else if (requestCode == CAMERA_PERMISSIONS_REQUEST_CODE) {
-            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                showNeedCameraPermissionDialog();
-            } else {
-                openSystemCamera();
-            }
-        }
-    }
-
-    /**
-     *  显示缺失权限提示，可再次请求动态权限
-     */
-    private void showNeedStoragePermissionDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("权限获取提示")
-                .setMessage("必须要有存储权限才能获取到图片")
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialog, int which) {
-                        ActivityCompat.requestPermissions(CapturePhotoActivity.this,
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST);
-                    }
-                }).setCancelable(false)
-                .show();
-    }
-
-
-    /**
-     *  显示权限被拒提示，只能进入设置手动改
-     */
-    private void showMissingStoragePermissionDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("权限获取失败")
-                .setMessage("必须要有存储权限才能正常运行")
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialog, int which) {
-                        CapturePhotoActivity.this.finish();
-                    }
-                })
-                .setPositiveButton("去设置", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialog, int which) {
-                        startAppSettings();
-                    }
-                })
-                .setCancelable(false)
-                .show();
-    }
-
-    private void showNeedCameraPermissionDialog() {
-        new AlertDialog.Builder(this)
-                .setMessage("摄像头权限被关闭，请开启权限后重试")
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create().show();
-    }
-
-    private static final String PACKAGE_URL_SCHEME = "package:";
-
-    /**
-     * 启动应用的设置进行授权
-     */
-    private void startAppSettings() {
-        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        intent.setData(Uri.parse(PACKAGE_URL_SCHEME + getPackageName()));
-        startActivityForResult(intent, OPEN_SETTING_REQUEST_COED);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_OK) {
-            if (requestCode == PICTURE_REQUEST_CODE) {
-                // 处理选择的图片
-//                handleInputPhoto(data.getData());
-            } else if (requestCode == OPEN_SETTING_REQUEST_COED){
-                requestMultiplePermissions();
-            } else if (requestCode == TAKE_PHOTO_REQUEST_CODE) {
-                // 如果拍照成功，加载图片并识别
-//                handleInputPhoto(currentTakePhotoUri);
-            }
-        }
-    }
-
-    /**
-     * 打开系统相机
-     */
-    private void openSystemCamera() {
-        //调用系统相机
-        Intent takePhotoIntent = new Intent();
-        takePhotoIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
-
-        //这句作用是如果没有相机则该应用不会闪退，要是不加这句则当系统没有相机应用的时候该应用会闪退
-        if (takePhotoIntent.resolveActivity(getPackageManager()) == null) {
-            Toast.makeText(this, "当前系统没有可用的相机应用", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-//        String fileName = "TF_" + System.currentTimeMillis() + ".jpg";
-//        File photoFile = new File(FileUtil.getPhotoCacheFolder(), fileName);
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            //通过FileProvider创建一个content类型的Uri
-//            currentTakePhotoUri = FileProvider.getUriForFile(this, "gdut.bsx.tensorflowtraining.fileprovider", photoFile);
-//            //对目标应用临时授权该 Uri 所代表的文件
-//            takePhotoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-//        } else {
-//            currentTakePhotoUri = Uri.fromFile(photoFile);
-//        }
-//
-//        //将拍照结果保存至 outputFile 的Uri中，不保留在相册中
-//        takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, currentTakePhotoUri);
-        startActivityForResult(takePhotoIntent, TAKE_PHOTO_REQUEST_CODE);
-    }
-
     public void WordJoint(String word){
         //如果结果集为空,则将词语加入
         if(wordSet.size() == 0){
@@ -571,9 +381,17 @@ public class CapturePhotoActivity extends AppCompatActivity {
             appearTimes++;
             return;
         }
+
         //如果该词语与上一个词语不同,且上一个词语的次数为1
         //则取代上一个词语,并清除标志位
         if(!word.equals(wordSet.get(wordSet.size() - 1)) && appearTimes == 1){
+            //如果该词语与上上个词语相同,
+            //则认为上一个词语是误判,将其删除
+            if(wordSet.size() > 1 && word.equals(wordSet.get(wordSet.size() - 2))){
+                wordSet.remove(wordSet.size() - 1);
+                appearTimes++;
+                return;
+            }
             wordSet.remove(wordSet.size() - 1);
             wordSet.add(word);
             appearTimes = 1;

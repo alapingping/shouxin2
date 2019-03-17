@@ -17,6 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".TakeTrainSetActivity"></activity>
         <activity android:name=".Welcome_Activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,7 +45,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".CapturePhotoActivity" />
-        <activity android:name=".TFUtils.TFActivity"></activity>
+        <activity android:name=".TFUtils.TFActivity" />
     </application>
 
 </manifest>

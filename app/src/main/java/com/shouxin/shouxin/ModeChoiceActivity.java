@@ -23,7 +23,7 @@ public class ModeChoiceActivity extends AppCompatActivity {
     }
 
     public void onClickVideoMode(View view) {
-        Intent intent = new Intent(this,TFActivity.class);
+        Intent intent = new Intent(this,TakeTrainSetActivity.class);
         startActivity(intent);
     }
 }
