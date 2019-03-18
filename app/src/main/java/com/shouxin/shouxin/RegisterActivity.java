@@ -64,13 +64,12 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        photoChoiceButton = (ImageButton)findViewById(R.id.imageButton);
     }
 
     public void onClickRegister(View view) {
-        EditText username_input = (EditText)findViewById(R.id.username_editText);
-        EditText password_input = (EditText)findViewById(R.id.password_editText);
-        EditText ensure_password_input = (EditText)findViewById(R.id.ensure_password_editText);
+        EditText username_input = (EditText)findViewById(R.id.uid);
+        EditText password_input = (EditText)findViewById(R.id.password);
+        EditText ensure_password_input = (EditText)findViewById(R.id.confirm_pass);
         //获取输入内容
         final String username = username_input.getText().toString();
         final String password = password_input.getText().toString();

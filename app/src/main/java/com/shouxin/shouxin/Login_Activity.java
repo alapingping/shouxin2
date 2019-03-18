@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import android.os.Handler;
@@ -31,26 +32,33 @@ public class Login_Activity extends AppCompatActivity {
 
     private String serverUrl = "http://39.108.60.40:9050/user";
 
+    Button loginBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_);
 
-        EditText password_input_view = (EditText)findViewById(R.id.password_input);
+        EditText password_input_view = (EditText)findViewById(R.id.password);
         password_input_view.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
-//        TextView signup_text = (TextView)findViewById(R.id.register_text);
-//        signup_text.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
-//        signup_text.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(Login_Activity.this,RegisterActivity.class);
-//                startActivity(intent);
-//            }
-//        });
+        TextView signup_text = (TextView)findViewById(R.id.register);
+        signup_text.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+        signup_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Login_Activity.this,RegisterActivity.class);
+                startActivity(intent);
+            }
+        });
 
-
+        loginBtn = findViewById(R.id.login_button);
+        loginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Login_Activity.this, CenterActivity.class));
+            }
+        });
     }
 
     private Handler loginHandler = new Handler(){
@@ -76,8 +84,8 @@ public class Login_Activity extends AppCompatActivity {
     };
 
     public void onClickLogin(View view) {
-        EditText account_text = findViewById(R.id.username_input);
-        EditText password_text = findViewById(R.id.password_input);
+        EditText account_text = findViewById(R.id.uid);
+        EditText password_text = findViewById(R.id.password);
         String account = account_text.getText().toString();
         String password = password_text.getText().toString();
 

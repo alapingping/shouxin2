@@ -56,31 +56,9 @@ public class Welcome_Activity extends AppCompatActivity {
 
     public void onClickStart(View view) {
 //       Intent intent = new Intent(this, Login_Activity.class);
-        Intent intent = new Intent(this, ModeChoiceActivity.class);
+        Intent intent = new Intent(this, Login_Activity.class);
         startActivity(intent);
     }
-
-//    public static void compressBitmapToFile(Bitmap bmp, File file) {
-//        // 尺寸压缩倍数,值越大，图片尺寸越小
-//        int ratio = 2;
-//        // 压缩Bitmap到对应尺寸
-//        Bitmap result = Bitmap.createBitmap(bmp.getWidth() / ratio, bmp.getHeight() / ratio, Config.ARGB_8888);
-//        Canvas canvas = new Canvas(result);
-//        Rect rect = new Rect(0, 0, bmp.getWidth() / ratio, bmp.getHeight() / ratio);
-//        canvas.drawBitmap(bmp, null, rect, null);
-//
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        // 把压缩后的数据存放到baos中
-//        result.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//        try {
-//            FileOutputStream fos = new FileOutputStream(file);
-//            fos.write(baos.toByteArray());
-//            fos.flush();
-//            fos.close();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     public void getPermission(){
         /**

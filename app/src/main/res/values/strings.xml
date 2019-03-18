@@ -9,6 +9,7 @@
     <string name="password_input_hint">在此输入密码</string>
     <string name="signin">Sign in</string>
     <string name="forget_password">忘记密码</string>
+    <string name="register_hint">新用户?点击这里注册</string>
 
     <!--this label for register-->
     <string name="register_name">邮箱</string>
@@ -16,6 +17,7 @@
     <string name="ensure_password">确认密码</string>
     <string name="photo_selection">选择头像</string>
     <string name="register">立即注册</string>
+    <string name="have_account">已有帐号?点击登录</string>
 
     <!--this label for login-->
     <string name="input_username">请输入账号</string>
@@ -43,4 +45,10 @@
     <string name="stop">停止</string>
     <string name="pause">暂停</string>
     <string name="begin">开始</string>
+
+
+    <string name="action_settings">Settings</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+
 </resources>
