@@ -36,13 +36,7 @@ public class SampleAdapter extends ArrayAdapter<String> {
         mLayoutInflater = LayoutInflater.from(context);
         mRandom = new Random();
         mBackgroundColors = new ArrayList<Integer>();
-        mBackgroundColors.add(R.drawable.p1);
-        mBackgroundColors.add(R.drawable.p2);
-        mBackgroundColors.add(R.drawable.p3);
-        mBackgroundColors.add(R.drawable.p4);
-        mBackgroundColors.add(R.drawable.p5);
         mBackgroundColors.add(R.drawable.p6);
-        mBackgroundColors.add(R.drawable.p7);
     }
 
     @Override
@@ -75,6 +69,14 @@ public class SampleAdapter extends ArrayAdapter<String> {
         vh.btnGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+                if(v.getTag().equals("unlike")){
+                    v.setTag("like");
+                    v.setBackgroundResource(R.drawable.ic_favorite_black_24dp);
+                }
+                else if(v.getTag().equals("like")){
+                    v.setTag("unlike");
+                    v.setBackgroundResource(R.drawable.ic_favorite_border_black_24dp);
+                }
                 Toast.makeText(getContext(), "Button Clicked Position " +
                         position, Toast.LENGTH_SHORT).show();
             }
