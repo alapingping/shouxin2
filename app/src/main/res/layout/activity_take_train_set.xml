@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,7 +12,7 @@
         android:layout_marginTop="230dp"
         android:layout_width="250dp"
         android:layout_height="250dp"
-        android:layout_marginLeft="55dp"
+        android:layout_gravity="center_horizontal"
         android:background="@drawable/linecolor"/>
 
     <TextView
@@ -26,7 +25,7 @@
         android:text="@string/initOrder"/>
 
     <GridLayout
-        android:layout_marginTop="600dp"
+        android:layout_marginTop="620dp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_weight="1"

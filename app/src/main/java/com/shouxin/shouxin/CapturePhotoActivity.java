@@ -158,7 +158,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
         displaybtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sentence.setText("当前结果:" + wordSet.toString());
+                sentence.setText("当前结果:" + getSentence(wordSet));
                 wordSet = new ArrayList<>();
             }
         });
@@ -351,15 +351,15 @@ public class CapturePhotoActivity extends AppCompatActivity {
                 try {
                     Log.i(TAG, Thread.currentThread().getName() + " startImageClassifier");
                     Bitmap croppedBitmap = new MyClassifer().getScaleBitmap(bitmap, Recognization.INPUT_SIZE);
-                    new UpLoader().saveBitmap(croppedBitmap, "new.png");
 
                     final List<Classifier.Recognition> results = classifier.recognizeImage(croppedBitmap);
                     Log.i(TAG, "startImageClassifier results: " + results);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            result.setText(String.format("results: %s", results));
+                            result.setText(String.format("识别结果: %s", results));
                             WordJoint(results.get(0).getTitle());
+                            sentence.setText("当前结果:" + getSentence(wordSet));
                         }
                     });
                 } catch (IOException e) {
@@ -374,7 +374,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
 
         //如果当前存入词语过长,则自动将其输出
         if(wordSet.size() > 20){
-            sentence.setText("当前结果:" + wordSet.toString());
+            sentence.setText("当前结果:" + getSentence(wordSet));
             wordSet = new ArrayList<>();
         }
         //如果结果集为空,则将词语加入
@@ -413,6 +413,15 @@ public class CapturePhotoActivity extends AppCompatActivity {
         }
 
     }
+
+    public String getSentence(ArrayList<String> words){
+        StringBuffer sb = new StringBuffer();
+        for(String word:words){
+            sb.append(word);
+        }
+        return sb.toString();
+    }
+
 
 }
 

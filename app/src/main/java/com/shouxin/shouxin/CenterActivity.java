@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.LinearLayout;
 
+import com.shouxin.shouxin.fragment.CommunityFragment;
 import com.shouxin.shouxin.fragment.ContentFragment;
 import com.shouxin.shouxin.fragment.ModeChoiceFragment;
 
@@ -162,6 +163,11 @@ public class CenterActivity extends AppCompatActivity implements ViewAnimator.Vi
         ContentFragment contentFragment = ContentFragment.newInstance(this.res);
         if(topPosition >= 1500){
             ModeChoiceFragment myFragment = new ModeChoiceFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, myFragment).commit();
+            return myFragment;
+        }
+        if(topPosition <= 800){
+            CommunityFragment myFragment = new CommunityFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, myFragment).commit();
             return myFragment;
         }

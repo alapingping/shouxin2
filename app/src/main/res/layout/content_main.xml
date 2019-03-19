@@ -10,7 +10,7 @@
 
     <SurfaceView
         android:id="@+id/surfaceView"
-        android:layout_width="324dp"
+        android:layout_width="300dp"
         android:layout_height="480dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
