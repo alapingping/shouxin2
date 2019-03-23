@@ -36,7 +36,14 @@ public class SampleAdapter extends ArrayAdapter<String> {
         mLayoutInflater = LayoutInflater.from(context);
         mRandom = new Random();
         mBackgroundColors = new ArrayList<Integer>();
+        mBackgroundColors.add(R.drawable.p1);
+        mBackgroundColors.add(R.drawable.p2);
+        mBackgroundColors.add(R.drawable.p3);
+        mBackgroundColors.add(R.drawable.p4);
+        mBackgroundColors.add(R.drawable.p5);
         mBackgroundColors.add(R.drawable.p6);
+        mBackgroundColors.add(R.drawable.p7);
+
     }
 
     @Override

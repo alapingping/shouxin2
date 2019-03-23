@@ -52,6 +52,7 @@ public class Welcome_Activity extends AppCompatActivity {
         permission.verifyAccessNetPermissions(Welcome_Activity.this);
         requestMultiplePermissions();
 
+
     }
 
     public void onClickStart(View view) {

@@ -161,16 +161,31 @@ public class CenterActivity extends AppCompatActivity implements ViewAnimator.Vi
         findViewById(R.id.content_overlay).setBackground(new BitmapDrawable(getResources(), screenShotable.getBitmap()));
         animator.start();
         ContentFragment contentFragment = ContentFragment.newInstance(this.res);
-        if(topPosition >= 1500){
+        if(topPosition >= 1500 && topPosition < 1700){
             ModeChoiceFragment myFragment = new ModeChoiceFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, myFragment).commit();
             return myFragment;
         }
-        if(topPosition <= 800){
+        if(topPosition >= 700 && topPosition <= 800){
             CommunityFragment myFragment = new CommunityFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, myFragment).commit();
             return myFragment;
         }
+        if(topPosition > 800 && topPosition <= 1000){
+            contentFragment = ContentFragment.newInstance(R.drawable.screenshot1);
+        }
+        else if(topPosition > 1000 && topPosition <= 1200){
+            contentFragment = ContentFragment.newInstance(R.drawable.screenshot2);
+        }
+        else if(topPosition > 1200 && topPosition <= 1400){
+            contentFragment = ContentFragment.newInstance(R.drawable.q1);
+        }
+//        else if(topPosition >= 1700){
+//            contentFragment = ContentFragment.newInstance(R.drawable.personpage);
+//        }
+//        else if(topPosition < 700){
+//            contentFragment = ContentFragment.newInstance(R.drawable.homepage);
+//        }
         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, contentFragment).commit();
         return contentFragment;
     }

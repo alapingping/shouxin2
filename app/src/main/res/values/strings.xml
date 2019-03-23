@@ -24,7 +24,7 @@
     <string name="input_password">请输入密码</string>
 
     <!--this label for mode choice-->
-    <string name="photo">图片识别</string>
+    <string name="photo">手语识别</string>
     <string name="video">采集数据</string>
 
     <!-- this label for take photo-->

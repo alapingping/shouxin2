@@ -62,6 +62,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
@@ -125,6 +126,13 @@ public class CapturePhotoActivity extends AppCompatActivity {
     private ArrayList<String> wordSet;
     //词语出现次数
     private int appearTimes = 0;
+
+    public static String[] MEANING = new String[]{
+            "拥有","山","不","一起","爱",
+            "好的", "你","我","曾经","大海",
+            "和","吗", "可以","帮助","跨过",
+            "吃饭",""};
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -237,23 +245,6 @@ public class CapturePhotoActivity extends AppCompatActivity {
         }
     };
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//            switch (requestCode) {
-//            //就像onActivityResult一样这个地方就是判断你是从哪来的。
-//            case 222:
-//            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//            // Permission Granted
-//            } else {
-//            // Permission Denied
-//                Toast.makeText(getApplicationContext(), "相机开启失败", Toast.LENGTH_SHORT)
-//                    .show();
-//            }
-//                break;
-//            default:
-//                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//            }
-//    }
 
     //内部StreamIt类???
     class StreamIt implements  Camera.PreviewCallback{
@@ -285,15 +276,16 @@ public class CapturePhotoActivity extends AppCompatActivity {
                         Matrix matrix = new Matrix();
                         matrix.postRotate((float)90.0);
                         Bitmap rotaBitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, false);
-                        Bitmap sizeBitmap = Bitmap.createScaledBitmap(rotaBitmap, 600, 800, true);
-                        Bitmap rectBmp = Bitmap.createBitmap(sizeBitmap,75,250,400,400);
+//                        Bitmap sizeBitmap = Bitmap.createScaledBitmap(rotaBitmap, 600, 800, true);
+//                        Bitmap sizeBitmap = Bitmap.createScaledBitmap(rotaBitmap, bmp.getHeight(), bmp.getWidth(), true);
+                        Bitmap rectBmp = Bitmap.createBitmap(rotaBitmap,180,620,666,666);
 
                         String pictureName = String.valueOf(System.currentTimeMillis()) + ".jpg";
 //                        final InputStream isBm = new ByteArrayInputStream(stream.toByteArray());
 
 //                        UpLoader upLoader = new UpLoader();
-//                        upLoader.saveBitmap(sizeBitmap, "before.png");
-//                        upLoader.saveBitmap(rectBmp, pictureName);
+//                        upLoader.saveBitmap(rotaBitmap, "rotaBitmap.png");
+//                        upLoader.saveBitmap(sizeBitmap, "sizeBitmap.png");
 
 //                        FileInputStream fis = new FileInputStream("/sdcard/trainset/after.png");
 //                        Bitmap testBmp = BitmapFactory.decodeStream(fis);
@@ -351,14 +343,13 @@ public class CapturePhotoActivity extends AppCompatActivity {
                 try {
                     Log.i(TAG, Thread.currentThread().getName() + " startImageClassifier");
                     Bitmap croppedBitmap = new MyClassifer().getScaleBitmap(bitmap, Recognization.INPUT_SIZE);
-
                     final List<Classifier.Recognition> results = classifier.recognizeImage(croppedBitmap);
                     Log.i(TAG, "startImageClassifier results: " + results);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            result.setText(String.format("识别结果: %s", results));
-                            WordJoint(results.get(0).getTitle());
+                            result.setText(String.format("识别结果: %s", getBestWord(results)));
+                            WordJoint(MEANING[Integer.valueOf(results.get(0).getTitle()) - 1]);
                             sentence.setText("当前结果:" + getSentence(wordSet));
                         }
                     });
@@ -422,53 +413,22 @@ public class CapturePhotoActivity extends AppCompatActivity {
         return sb.toString();
     }
 
+    public String getBestWord(List<Classifier.Recognition> results){
+        String result = null;
+        if(results.size() == 0){
+            result = "";
+        }
+        else{
+            result = MEANING[Integer.valueOf(results.get(0).getTitle()) - 1]
+                    + " 置信度:" + getConfidenceTwoDigits(results.get(0).getConfidence());
+        }
+        return result;
+    }
+
+    private String getConfidenceTwoDigits(float num){
+        NumberFormat nf = NumberFormat.getCurrencyInstance();
+        nf.setMaximumFractionDigits(2);
+        return nf.format(num).substring(1);
+    }
 
 }
-
-
-
-
-
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        return true;
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
-
-
-//    public void saveBitmap() {
-//        File f = new File("/sdcard/namecard/", picName);
-//        if (f.exists()) {
-//            f.delete();
-//        }
-//        try {
-//            FileOutputStream out = new FileOutputStream(f);
-//            bm.compress(Bitmap.CompressFormat.PNG, 90, out);
-//            out.flush();
-//            out.close();
-//        } catch (FileNotFoundException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//
-//    }
