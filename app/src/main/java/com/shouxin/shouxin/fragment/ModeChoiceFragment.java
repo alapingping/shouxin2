@@ -8,12 +8,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 
-import com.shouxin.shouxin.CapturePhotoActivity;
+import com.shouxin.shouxin.Views.CapturePhotoActivity;
 import com.shouxin.shouxin.R;
-import com.shouxin.shouxin.TakeTrainSetActivity;
+import com.shouxin.shouxin.Views.TakeTrainSetActivity;
 
 import yalantis.com.sidemenu.interfaces.ScreenShotable;
 

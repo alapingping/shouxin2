@@ -1,4 +1,4 @@
-package com.shouxin.shouxin.PermissionManager;
+package com.shouxin.shouxin.Utils;
 
 import android.Manifest;
 import android.app.Activity;
@@ -9,7 +9,7 @@ import android.support.v4.app.ActivityCompat;
  * Created by 16301 on 2018/9/25 0025.
  */
 
-public class Permission {
+public class PermissionManager {
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {

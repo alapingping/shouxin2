@@ -1,12 +1,11 @@
-package com.shouxin.shouxin.Recognization;
+package com.shouxin.shouxin.ternsorflow;
 
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 
 import java.io.IOException;
 
-public class MyClassifer implements Recognization{
-
+public class MyClassifer implements Recognization {
 
     /**
      * 对图片进行缩放

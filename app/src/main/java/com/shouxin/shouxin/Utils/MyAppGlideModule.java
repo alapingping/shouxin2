@@ -1,4 +1,4 @@
-package com.shouxin.shouxin.TFUtils;
+package com.shouxin.shouxin.Utils;
 
 import com.bumptech.glide.module.AppGlideModule;
 import com.bumptech.glide.annotation.GlideModule;

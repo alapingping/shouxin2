@@ -1,4 +1,4 @@
-package com.shouxin.shouxin;
+package com.shouxin.shouxin.Views;
 
 import android.content.Intent;
 import android.graphics.Paint;
@@ -13,6 +13,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.shouxin.shouxin.R;
 
 import java.io.IOException;
 
@@ -60,6 +62,7 @@ public class Login_Activity extends AppCompatActivity {
             }
         });
     }
+
 
     private Handler loginHandler = new Handler(){
         @Override

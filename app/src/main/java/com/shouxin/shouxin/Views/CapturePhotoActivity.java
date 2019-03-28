@@ -1,9 +1,5 @@
-package com.shouxin.shouxin;
+package com.shouxin.shouxin.Views;
 
-import android.Manifest;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,21 +8,12 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
-import android.icu.lang.UProperty;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.MessageQueue;
-import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -36,44 +23,21 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.shouxin.shouxin.API.Client;
-import com.shouxin.shouxin.API.Service;
-import com.shouxin.shouxin.Recognization.MyClassifer;
-import com.shouxin.shouxin.Recognization.Recognization;
-import com.shouxin.shouxin.TFUtils.FileUtil;
-import com.shouxin.shouxin.TFUtils.TFActivity;
-import com.shouxin.shouxin.Util.PictureToBase64;
-import com.shouxin.shouxin.Util.UpLoader;
+import com.shouxin.shouxin.R;
+import com.shouxin.shouxin.ternsorflow.MyClassifer;
+import com.shouxin.shouxin.ternsorflow.Recognization;
 import com.shouxin.shouxin.ternsorflow.Classifier;
 import com.shouxin.shouxin.ternsorflow.TensorFlowImageClassifier;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
-
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Response;
 
 public class CapturePhotoActivity extends AppCompatActivity {
     //预览界面对象
@@ -276,30 +240,28 @@ public class CapturePhotoActivity extends AppCompatActivity {
                         Matrix matrix = new Matrix();
                         matrix.postRotate((float)90.0);
                         Bitmap rotaBitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, false);
-//                        Bitmap sizeBitmap = Bitmap.createScaledBitmap(rotaBitmap, 600, 800, true);
-//                        Bitmap sizeBitmap = Bitmap.createScaledBitmap(rotaBitmap, bmp.getHeight(), bmp.getWidth(), true);
                         Bitmap rectBmp = Bitmap.createBitmap(rotaBitmap,180,620,666,666);
 
                         String pictureName = String.valueOf(System.currentTimeMillis()) + ".jpg";
 //                        final InputStream isBm = new ByteArrayInputStream(stream.toByteArray());
 
-//                        UpLoader upLoader = new UpLoader();
+//                        PictureNetworkOperator upLoader = new PictureNetworkOperator();
 //                        upLoader.saveBitmap(rotaBitmap, "rotaBitmap.png");
 //                        upLoader.saveBitmap(sizeBitmap, "sizeBitmap.png");
 
 //                        FileInputStream fis = new FileInputStream("/sdcard/trainset/after.png");
 //                        Bitmap testBmp = BitmapFactory.decodeStream(fis);
 //                        新开线程向服务器上传图片
-//                    new Thread(new Runnable() {
+//                        new Thread(new Runnable() {
 //                        @Override
 //                        public void run() {
-//                            new UpLoader().uploadFileAndString("http://39.108.60.40:9050/file",
+//                            new PictureNetworkOperator().uploadFileAndString("http://39.108.60.40:9050/file",
 //                                    pictureName, isBm);
 //                        }
-//                    }).start();
+//                        }).start();
 
                         //调用远程api进行识别
-//                    new UpLoader().callRemoteApi(rectBmp);
+//                      new PictureNetworkOperator().callRemoteApi(rectBmp);
 
                         //saveBitmap(bmp ,picture_name);
 

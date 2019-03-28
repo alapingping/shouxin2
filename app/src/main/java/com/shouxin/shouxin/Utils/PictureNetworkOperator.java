@@ -1,4 +1,4 @@
-package com.shouxin.shouxin.Util;
+package com.shouxin.shouxin.Utils;
 
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -24,7 +24,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class UpLoader {
+public class PictureNetworkOperator {
 
     public void uploadFileAndString(String actionUrl, String newName, InputStream ffStream) {
         String end = "\r\n";
@@ -96,7 +96,7 @@ public class UpLoader {
     public void callRemoteApi(Bitmap bmp) throws JSONException {
         //使用retrofit调用百度api
         String access_token = "24.ddfb06c45e8ba9fe5043dbd9581b4280.2592000.1553944820.282335-15644269";
-        String base64OfPicture = PictureToBase64.bitmapToBase64(bmp);
+        String base64OfPicture = PictureProcessUtil.bitmapToBase64(bmp);
         Service service = Client.retrofit.create(Service.class);
         //构造请求体
         JSONObject info = new JSONObject();
@@ -129,23 +129,5 @@ public class UpLoader {
         });
     }
 
-    public void saveBitmap(Bitmap bm, String picName) {
-        File f = new File("/sdcard/trainset/", picName);
-        if (f.exists()) {
-            f.delete();
-        }
-        try {
-            FileOutputStream out = new FileOutputStream(f);
-            bm.compress(Bitmap.CompressFormat.PNG, 90, out);
-            out.flush();
-            out.close();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
 
 }

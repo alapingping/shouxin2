@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegisterActivity"
+    tools:context=".Views.RegisterActivity"
     tools:layout_editor_absoluteY="81dp">
 
     <android.support.v7.widget.LinearLayoutCompat
@@ -77,6 +77,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"
             android:background="@drawable/shape_radius_ractangle_button"
+            android:onClick="onClickRegister"
             android:text="@string/register" />
 
     </android.support.v7.widget.LinearLayoutCompat>

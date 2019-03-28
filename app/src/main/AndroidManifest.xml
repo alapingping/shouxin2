@@ -19,9 +19,9 @@
         android:hardwareAccelerated="false"
         android:largeHeap="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CenterActivity"></activity>
-        <activity android:name=".TakeTrainSetActivity" />
-        <activity android:name=".Welcome_Activity">
+        <activity android:name=".Views.CenterActivity"></activity>
+        <activity android:name=".Views.TakeTrainSetActivity" />
+        <activity android:name=".Views.Welcome_Activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Login_Activity"
+            android:name=".Views.Login_Activity"
             android:label="登陆">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,17 +38,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ModeChoiceActivity"
+            android:name=".Views.ModeChoiceActivity"
             android:label="模式选择" />
         <activity
-            android:name=".RegisterActivity"
+            android:name=".Views.RegisterActivity"
             android:label="注册">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".CapturePhotoActivity" />
-        <activity android:name=".TFUtils.TFActivity" />
+        <activity android:name=".Views.CapturePhotoActivity" />
     </application>
 
 </manifest>

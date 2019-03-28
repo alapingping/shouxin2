@@ -1,4 +1,4 @@
-package com.shouxin.shouxin;
+package com.shouxin.shouxin.Views;
 
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -9,10 +9,7 @@ import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
-import android.os.MessageQueue;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -23,21 +20,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.shouxin.shouxin.Recognization.MyClassifer;
-import com.shouxin.shouxin.Recognization.Recognization;
-import com.shouxin.shouxin.Util.UpLoader;
-import com.shouxin.shouxin.ternsorflow.Classifier;
-import com.shouxin.shouxin.ternsorflow.TensorFlowImageClassifier;
+import com.shouxin.shouxin.R;
+import com.shouxin.shouxin.Utils.PictureProcessUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadFactory;
+import java.lang.reflect.Method;
 
 public class TakeTrainSetActivity extends AppCompatActivity {
 
@@ -54,8 +44,10 @@ public class TakeTrainSetActivity extends AppCompatActivity {
 
     private boolean isPreview = false;
 
+    //图片序号显示控件
     TextView pictureOrderText;
 
+    //开始,暂停,停止按钮
     Button stopBtn;
     Button beginBtn;
     Button pauseBtn;
@@ -171,9 +163,8 @@ public class TakeTrainSetActivity extends AppCompatActivity {
     }
 
 
-
-    //内部StreamIt类???
-    class StreamIt implements  Camera.PreviewCallback{
+    //实现PreviewCallback类
+    class StreamIt implements Camera.PreviewCallback{
         private String ipname;
         //帧序号
         public int frameOrder = 0;
@@ -205,11 +196,17 @@ public class TakeTrainSetActivity extends AppCompatActivity {
                             Bitmap sizeBitmap = Bitmap.createScaledBitmap(rotaBitmap, 600, 800, true);
                             Bitmap rectBmp = Bitmap.createBitmap(sizeBitmap, 75, 250, 400, 400);
 
+                            //利用时间戳为图片命名防止覆盖
                             String pictureName = String.valueOf(System.currentTimeMillis()) + ".jpg";
                             final InputStream isBm = new ByteArrayInputStream(stream.toByteArray());
 
-                            UpLoader upLoader = new UpLoader();
-                            upLoader.saveBitmap(rectBmp, pictureName);
+                            //利用反射调用工具类方法存储图片
+                            Class<?> clazz = Class.forName("com.shouxin.shouxin.Utils.PictureProcessUtil");
+                            PictureProcessUtil processUtil = (PictureProcessUtil) clazz.newInstance();
+                            Method savePictureMethod = clazz.getMethod("saveBitmap", Bitmap.class, String.class);
+                            savePictureMethod.invoke(processUtil, rectBmp, pictureName);
+//                            PictureNetworkOperator upLoader = new PictureNetworkOperator();
+//                            upLoader.saveBitmap(rectBmp, pictureName);
                             pictureOrderText.setText("当前图片序号:" + String.valueOf((frameOrder / 30) + 1));
 
                             stream.flush();

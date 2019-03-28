@@ -1,11 +1,11 @@
-package com.shouxin.shouxin;
+package com.shouxin.shouxin.Views;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.shouxin.shouxin.TFUtils.TFActivity;
+import com.shouxin.shouxin.R;
 
 public class ModeChoiceActivity extends AppCompatActivity {
 

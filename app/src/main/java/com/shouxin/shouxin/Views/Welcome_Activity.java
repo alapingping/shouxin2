@@ -1,21 +1,14 @@
-package com.shouxin.shouxin;
+package com.shouxin.shouxin.Views;
 
-import com.shouxin.shouxin.PermissionManager.Permission;
+import com.shouxin.shouxin.R;
+import com.shouxin.shouxin.Utils.PermissionManager;
 
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Rect;
-import android.media.CamcorderProfile;
-import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
-import android.os.SystemClock;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -23,12 +16,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +35,7 @@ public class Welcome_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome_);
-        Permission permission = new Permission();
+        PermissionManager permission = new PermissionManager();
         permission.verifyStoragePermissions(Welcome_Activity.this);
         permission.verifyAccessNetPermissions(Welcome_Activity.this);
         requestMultiplePermissions();

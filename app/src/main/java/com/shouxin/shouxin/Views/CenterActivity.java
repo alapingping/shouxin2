@@ -1,4 +1,4 @@
-package com.shouxin.shouxin;
+package com.shouxin.shouxin.Views;
 
 import android.animation.Animator;
 import android.content.res.Configuration;
@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.LinearLayout;
 
+import com.shouxin.shouxin.R;
 import com.shouxin.shouxin.fragment.CommunityFragment;
 import com.shouxin.shouxin.fragment.ContentFragment;
 import com.shouxin.shouxin.fragment.ModeChoiceFragment;

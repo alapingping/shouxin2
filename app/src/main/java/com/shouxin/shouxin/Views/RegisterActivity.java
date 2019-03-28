@@ -1,10 +1,9 @@
-package com.shouxin.shouxin;
+package com.shouxin.shouxin.Views;
 
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
@@ -15,6 +14,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import com.shouxin.shouxin.R;
 
 import java.io.IOException;
 
@@ -40,7 +41,7 @@ public class RegisterActivity extends AppCompatActivity {
     private String ServerUrl = "http://39.108.60.40:9050/register";
 
     //处理子线程中的信息并及时更新界面
-    private Handler register_msg_handler = new Handler() {
+    private Handler register_msg_handler = new Handler(getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             switch(msg.what){
