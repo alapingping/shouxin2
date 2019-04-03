@@ -39,6 +39,11 @@ public class ContentFragment extends Fragment implements ScreenShotable {
         return contentFragment;
     }
 
+    public static ContentFragment getInstance() {
+        ContentFragment contentFragment = new ContentFragment();
+        return contentFragment;
+    }
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {

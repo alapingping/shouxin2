@@ -1,4 +1,4 @@
-package com.shouxin.shouxin.Adapter;
+package com.shouxin.shouxin.DataModel;
 
 import java.util.ArrayList;
 

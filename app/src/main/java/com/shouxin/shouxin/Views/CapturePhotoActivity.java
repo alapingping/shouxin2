@@ -242,12 +242,12 @@ public class CapturePhotoActivity extends AppCompatActivity {
                         Bitmap rotaBitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, false);
                         Bitmap rectBmp = Bitmap.createBitmap(rotaBitmap,180,620,666,666);
 
-                        String pictureName = String.valueOf(System.currentTimeMillis()) + ".jpg";
+                        //将截取的位图进行压缩并喂入分类模型
+                        startImageClassifier(rectBmp);
+
+                        stream.flush();
 //                        final InputStream isBm = new ByteArrayInputStream(stream.toByteArray());
 
-//                        PictureNetworkOperator upLoader = new PictureNetworkOperator();
-//                        upLoader.saveBitmap(rotaBitmap, "rotaBitmap.png");
-//                        upLoader.saveBitmap(sizeBitmap, "sizeBitmap.png");
 
 //                        FileInputStream fis = new FileInputStream("/sdcard/trainset/after.png");
 //                        Bitmap testBmp = BitmapFactory.decodeStream(fis);
@@ -265,10 +265,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
 
                         //saveBitmap(bmp ,picture_name);
 
-                        //将截取的位图进行压缩并喂入分类模型
-                        startImageClassifier(rectBmp);
 
-                        stream.flush();
                     }
                 } catch (Exception e) {
                     Log.d("---------output:", e.getMessage());

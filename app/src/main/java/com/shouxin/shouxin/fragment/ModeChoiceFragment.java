@@ -24,10 +24,18 @@ public class ModeChoiceFragment extends Fragment implements ScreenShotable {
     Button takePicBtn;
     Button takeTrainsetBtn;
 
+    private static ModeChoiceFragment modeChoiceFragment = new ModeChoiceFragment();
+
     public ModeChoiceFragment() {
         // Required empty public constructor
     }
 
+    public static ModeChoiceFragment getInstance(){
+        if(modeChoiceFragment == null){
+            modeChoiceFragment = new ModeChoiceFragment();
+        }
+        return modeChoiceFragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.etsy.android.grid.StaggeredGridView;
 import com.shouxin.shouxin.Adapter.SampleAdapter;
-import com.shouxin.shouxin.Adapter.SampleData;
+import com.shouxin.shouxin.DataModel.SampleData;
 import com.shouxin.shouxin.R;
 import com.yalantis.phoenix.PullToRefreshView;
 
@@ -35,6 +35,8 @@ public class CommunityFragment extends Fragment implements
     private boolean mHasRequestedMore;
     private SampleAdapter mAdapter;
     private PullToRefreshView mPullToRefreshView;
+
+    private static CommunityFragment communityFragment = new CommunityFragment();
 
     private ArrayList<String> mData;
 
@@ -146,4 +148,12 @@ public class CommunityFragment extends Fragment implements
     public Bitmap getBitmap() {
         return null;
     }
+
+    public static CommunityFragment getInstance(){
+        if(communityFragment == null){
+            communityFragment = new CommunityFragment();
+        }
+        return communityFragment;
+    }
+
 }

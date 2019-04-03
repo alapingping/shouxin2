@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.shouxin.shouxin.R;
@@ -40,8 +41,11 @@ public class RegisterActivity extends AppCompatActivity {
     //http请求所需url地址
     private String ServerUrl = "http://39.108.60.40:9050/register";
 
+    //返回登陆界面
+    TextView back2login;
+
     //处理子线程中的信息并及时更新界面
-    private Handler register_msg_handler = new Handler(getMainLooper()) {
+    private Handler register_msg_handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch(msg.what){
@@ -65,6 +69,16 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        back2login = this.findViewById(R.id.back2login);
+        back2login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(RegisterActivity.this,Login_Activity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     public void onClickRegister(View view) {
