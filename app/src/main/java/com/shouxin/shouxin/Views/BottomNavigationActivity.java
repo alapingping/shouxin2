@@ -75,7 +75,8 @@ public class BottomNavigationActivity extends AppCompatActivity {
                 .hide(DictionaryFragment.getInstance())
                 .show(CommunityFragment.getInstance())
                 .commit();
-    }
+
+        }
 
 
 

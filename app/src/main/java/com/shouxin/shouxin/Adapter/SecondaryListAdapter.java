@@ -321,5 +321,9 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
         public List<V> getSubItems() {
             return subItems;
         }
+
+        public int getSubItemsNum(){
+            return subItems.size();
+        }
     }
 }

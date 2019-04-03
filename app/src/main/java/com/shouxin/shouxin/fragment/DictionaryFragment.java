@@ -14,6 +14,7 @@ import com.shouxin.shouxin.Adapter.RvDividerItemDecoration;
 import com.shouxin.shouxin.Adapter.SecondaryListAdapter;
 import com.shouxin.shouxin.DataModel.ItemEntry;
 import com.shouxin.shouxin.R;
+import com.shouxin.shouxin.Views.BottomNavigationActivity;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class DictionaryFragment extends Fragment {
         rv.setHasFixedSize(true);
         rv.addItemDecoration(new RvDividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
 
-        RecyclerAdapter ra = new RecyclerAdapter(getContext());
+        RecyclerAdapter ra = new RecyclerAdapter(getActivity());
         ra.setData(datas);
         rv.setAdapter(ra);
 

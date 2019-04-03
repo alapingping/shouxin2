@@ -1,15 +1,17 @@
 package com.shouxin.shouxin.Adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
-import android.support.annotation.NonNull;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.shouxin.shouxin.DataModel.ItemEntry;
 import com.shouxin.shouxin.R;
+import com.shouxin.shouxin.Views.SingleWordActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +34,7 @@ public class RecyclerAdapter extends SecondaryListAdapter<GroupItemViewHolder, S
     @Override
     public RecyclerView.ViewHolder groupItemViewHolder(ViewGroup parent) {
 
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_word, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_group, parent, false);
 
         return new GroupItemViewHolder(v);
     }
@@ -49,7 +51,7 @@ public class RecyclerAdapter extends SecondaryListAdapter<GroupItemViewHolder, S
     public void onGroupItemBindViewHolder(RecyclerView.ViewHolder holder, int groupItemIndex) {
 
         ((GroupItemViewHolder) holder).tvGroup.setText(dts.get(groupItemIndex).getGroupItem());
-
+        ((GroupItemViewHolder) holder).tvItemNum.setText(String.valueOf(dts.get(groupItemIndex).getSubItemsNum()));
     }
 
     @Override
@@ -62,18 +64,24 @@ public class RecyclerAdapter extends SecondaryListAdapter<GroupItemViewHolder, S
     @Override
     public void onGroupItemClick(Boolean isExpand, GroupItemViewHolder holder, int groupItemIndex) {
 
-        Toast.makeText(context, "group item " + String.valueOf(groupItemIndex) + " is expand " +
-                String.valueOf(isExpand), Toast.LENGTH_SHORT).show();
+        if(!isExpand){
+            holder.imageView.setBackground(context.getDrawable(R.drawable.ic_expend));
+        }else{
+            holder.imageView.setBackground(context.getDrawable(R.drawable.ic_fold));
+        }
 
     }
 
     @Override
     public void onSubItemClick(SubItemViewHolder holder, int groupItemIndex, int subItemIndex) {
 
-        Toast.makeText(context, "sub item " + String.valueOf(subItemIndex) + " in group item " +
-                String.valueOf(groupItemIndex), Toast.LENGTH_SHORT).show();
+        ItemEntry word = dts.get(groupItemIndex).getSubItems().get(subItemIndex);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("word", word);
 
-        
+        Intent intent = new Intent(context, SingleWordActivity.class);
+        intent.putExtras(bundle);
+        context.startActivity(intent);
 
     }
 }
