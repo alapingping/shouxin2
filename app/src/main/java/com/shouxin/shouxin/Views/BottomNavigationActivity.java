@@ -14,6 +14,7 @@ import com.shouxin.shouxin.fragment.CommunityFragment;
 import com.shouxin.shouxin.fragment.ContentFragment;
 import com.shouxin.shouxin.fragment.DictionaryFragment;
 import com.shouxin.shouxin.fragment.ModeChoiceFragment;
+import com.shouxin.shouxin.fragment.SearchFragment;
 
 public class BottomNavigationActivity extends AppCompatActivity {
 
@@ -69,7 +70,7 @@ public class BottomNavigationActivity extends AppCompatActivity {
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.container_frame, ModeChoiceFragment.getInstance())
-                .add(R.id.container_frame, DictionaryFragment.getInstance())
+                .add(R.id.container_frame, SearchFragment.getInstance())
                 .add(R.id.container_frame, CommunityFragment.getInstance())
                 .hide(ModeChoiceFragment.getInstance())
                 .hide(DictionaryFragment.getInstance())

@@ -224,7 +224,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
         public void onPreviewFrame(byte[] data, Camera camera)
         {
             frameOrder++;
-            if(frameOrder%30==0 || frameOrder == 0){
+            if(frameOrder%15==0 || frameOrder == 0){
                 Camera.Size size = camera.getParameters().getPreviewSize();
                 System.out.println(ipname);
                 try {
