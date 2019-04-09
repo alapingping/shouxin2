@@ -44,7 +44,8 @@ public class SearchFragment extends Fragment {
 
         @Override
         public void handleMessage(Message msg){
-            imageView.setBackground(drawable);
+            if(msg.what == 1)
+                imageView.setBackground(drawable);
             wordDescription.setText(wordDescriptionCont);
             wordTitle.setText(wordTitleCont);
         }
@@ -87,7 +88,10 @@ public class SearchFragment extends Fragment {
                     public void run() {
                         try {
                             wordDescriptionCont = getNetworkData(word);
-                            mainHandler.sendEmptyMessage(0);
+                            if(wordDescriptionCont.equals("（暂无该词手语）"))
+                                mainHandler.sendEmptyMessage(0);
+                            else
+                                mainHandler.sendEmptyMessage(1);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
