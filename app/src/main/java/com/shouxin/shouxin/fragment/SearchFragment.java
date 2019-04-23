@@ -14,7 +14,9 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.shouxin.shouxin.DataModel.ItemEntry;
 import com.shouxin.shouxin.R;
+import com.shouxin.shouxin.database.DaoImpl.ItemEntryDaoImpl;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -34,8 +36,7 @@ public class SearchFragment extends Fragment {
     SearchView searchView;
 
     Drawable drawable;
-    String wordDescriptionCont;
-    String wordTitleCont;
+    ItemEntry itemEntry = new ItemEntry();
 
     private static Fragment searchFragment = new SearchFragment();
 
@@ -46,13 +47,14 @@ public class SearchFragment extends Fragment {
         public void handleMessage(Message msg){
             if(msg.what == 1)
                 imageView.setBackground(drawable);
-            wordDescription.setText(wordDescriptionCont);
-            wordTitle.setText(wordTitleCont);
+            wordDescription.setText(itemEntry.getDescription());
+            wordTitle.setText(itemEntry.getName());
+            StoreData(itemEntry);
         }
 
     };
-    Handler mhandler;
 
+    Handler mhandler;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -79,49 +81,25 @@ public class SearchFragment extends Fragment {
         wordTitle = view.findViewById(R.id.wordTitle);
         wordDescription = view.findViewById(R.id.wordDescription);
         searchView = view.findViewById(R.id.search);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                final String word = s;
-                mhandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            wordDescriptionCont = getNetworkData(word);
-                            if(wordDescriptionCont.equals("（暂无该词手语）"))
-                                mainHandler.sendEmptyMessage(0);
-                            else
-                                mainHandler.sendEmptyMessage(1);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
+        searchView.setOnQueryTextListener(listener);
 
         return view;
     }
 
-    public String getNetworkData(String WordName) throws IOException {
+    public void getNetworkData(String WordName) throws IOException {
 
         final String BASE_URL = "https://shouyu.51240.com/";
         final String POSTFIX = "__shouyus/";
         String url = BASE_URL + WordName + POSTFIX;
+        itemEntry.setPictureUrl(url);
 
         Document doc = Jsoup.connect(url).timeout(5000).get();
         Elements pngs = doc.select("img[src$=.png]");
-        wordTitleCont = WordName;
+        itemEntry.setName(WordName);
         drawable = png2Drawable(pngs.get(0).attr("src").substring(2));
 
         Elements titles = doc.select("td[bgcolor=#FFFFFF]");
-        return titles.get(0).text();
+        itemEntry.setDescription(titles.get(0).text());
 
     }
 
@@ -136,5 +114,36 @@ public class SearchFragment extends Fragment {
         return localDrawable;
     }
 
+    public void StoreData(ItemEntry itemEntry){
+        ItemEntryDaoImpl iedi = new ItemEntryDaoImpl(getContext());
+        iedi.add(itemEntry);
+    }
 
+    private SearchView.OnQueryTextListener listener = new SearchView.OnQueryTextListener(){
+        @Override
+        public boolean onQueryTextSubmit(String s) {
+            final String word = s;
+            mhandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        getNetworkData(word);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if(itemEntry.getDescription().equals("（暂无该词手语）"))
+                        mainHandler.sendEmptyMessage(0);
+                    else
+                        mainHandler.sendEmptyMessage(1);
+
+                }
+            });
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String s) {
+            return false;
+        }
+    };
 }
