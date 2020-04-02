@@ -1,4 +1,4 @@
-package com.shouxin.shouxin.Views;
+package com.shouxin.shouxin.Activity;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -8,7 +8,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;

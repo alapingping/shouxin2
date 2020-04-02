@@ -3,7 +3,7 @@ package com.shouxin.shouxin.Utils;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
+import androidx.core.app.ActivityCompat;
 
 /**
  * Created by 16301 on 2018/9/25 0025.

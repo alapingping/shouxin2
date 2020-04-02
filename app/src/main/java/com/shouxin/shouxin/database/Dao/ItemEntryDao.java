@@ -7,8 +7,8 @@ import com.shouxin.shouxin.DataModel.ItemEntry;
 public interface ItemEntryDao {
 
     void add(ItemEntry itemEntry);
-    void remove(ItemEntry itemEntry);
+    void remove(String name);
     void update(ItemEntry itemEntry);
-    ItemEntry findById(ItemEntry itemEntry);
+    ItemEntry findById(String name);
 
 }

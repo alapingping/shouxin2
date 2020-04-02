@@ -11,6 +11,7 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
+        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:hardwareAccelerated="false"
         android:icon="@drawable/ic_app_icon"
@@ -19,21 +20,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Views.SingleWordActivity"></activity>
+        <activity android:name=".Activity.SingleWordActivity"></activity>
         <activity
-            android:name=".Views.BottomNavigationActivity"
-            android:label="@string/title_activity_bottom_navigation" />
-        <activity android:name=".Views.CenterActivity" />
-        <activity android:name=".Views.TakeTrainSetActivity" />
-        <activity android:name=".Views.Welcome_Activity">
+            android:name=".Activity.BottomNavigationActivity"
+            android:label="@string/title_activity_bottom_navigation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Activity.CenterActivity" />
+        <activity android:name=".Activity.TakeTrainSetActivity" />
+        <activity android:name=".Activity.Welcome_Activity">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
         <activity
-            android:name=".Views.Login_Activity"
+            android:name=".Activity.Login_Activity"
             android:label="登陆"
             android:launchMode="singleTask">
             <intent-filter>
@@ -41,16 +48,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Views.ModeChoiceActivity"
+            android:name=".Activity.ModeChoiceActivity"
             android:label="模式选择" />
         <activity
-            android:name=".Views.RegisterActivity"
+            android:name=".Activity.RegisterActivity"
             android:label="注册">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".Views.CapturePhotoActivity" />
+        <activity android:name=".Activity.CapturePhotoActivity" />
     </application>
 
 </manifest>

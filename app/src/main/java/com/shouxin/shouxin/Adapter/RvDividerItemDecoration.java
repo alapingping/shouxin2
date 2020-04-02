@@ -5,8 +5,8 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 public class RvDividerItemDecoration extends RecyclerView.ItemDecoration{
@@ -56,7 +56,7 @@ public class RvDividerItemDecoration extends RecyclerView.ItemDecoration{
         final int right = parent.getWidth() - parent.getPaddingRight();
 
         final int childCount = parent.getChildCount();
-        for ( int i = 0; i < childCount; i++ ) {
+        for ( int i = 0; i < childCount - 1; i++ ) {
             final View child = parent.getChildAt(i);
             RecyclerView recyclerView = new RecyclerView(parent.getContext());
             final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();

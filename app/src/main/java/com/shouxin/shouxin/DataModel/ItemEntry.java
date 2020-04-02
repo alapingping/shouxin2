@@ -1,9 +1,8 @@
 package com.shouxin.shouxin.DataModel;
 
 import java.io.Serializable;
-import java.net.URL;
 
-public class ItemEntry extends Entry implements Serializable {
+public class ItemEntry implements Serializable {
 
     public ItemEntry(){}
 
@@ -19,7 +18,6 @@ public class ItemEntry extends Entry implements Serializable {
 
     private String pictureUrl;
 
-    @Override
     public String getName() {
         return name;
     }

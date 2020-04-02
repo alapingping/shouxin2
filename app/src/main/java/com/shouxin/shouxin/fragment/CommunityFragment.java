@@ -3,7 +3,11 @@ package com.shouxin.shouxin.fragment;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.etsy.android.grid.StaggeredGridView;
+import com.shouxin.shouxin.Adapter.CommunityAdapter;
 import com.shouxin.shouxin.Adapter.SampleAdapter;
 import com.shouxin.shouxin.DataModel.SampleData;
 import com.shouxin.shouxin.R;
@@ -23,7 +28,7 @@ import java.util.ArrayList;
 
 import yalantis.com.sidemenu.interfaces.ScreenShotable;
 
-import static android.support.constraint.Constraints.TAG;
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,6 +39,11 @@ public class CommunityFragment extends Fragment implements
     private StaggeredGridView mGridView;
     private boolean mHasRequestedMore;
     private SampleAdapter mAdapter;
+
+    private CommunityAdapter mcAdapter;
+    private RecyclerView recyclerView;
+
+
     private PullToRefreshView mPullToRefreshView;
 
     private static CommunityFragment communityFragment = new CommunityFragment();
@@ -51,7 +61,8 @@ public class CommunityFragment extends Fragment implements
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_community, container, false);
 
-        mGridView = (StaggeredGridView) view.findViewById(R.id.grid_view);
+        recyclerView = view.findViewById(R.id.recycler);
+//        mGridView = (StaggeredGridView) view.findViewById(R.id.grid_view);
         mPullToRefreshView = (PullToRefreshView) view.findViewById(R.id.pull_to_refresh);
         mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
             @Override
@@ -77,26 +88,36 @@ public class CommunityFragment extends Fragment implements
             txtHeaderTitle.setText("下拉刷新");
             txtFooterTitle.setText("没有更多内容啦!");
 
-            mGridView.addHeaderView(header);
-            mGridView.addFooterView(footer);
+
+            mData = new ArrayList<>();
+            mData.add("1");
+            mData.add("2");
+            mData.add("3");
+            mcAdapter = new CommunityAdapter(mData, getActivity());
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+//            mGridView.addHeaderView(header);
+//            mGridView.addFooterView(footer);
+        } else {
+            mData = savedInstanceState.getStringArrayList("data");
         }
 
-        if (mAdapter == null) {
-            mAdapter = new SampleAdapter(getActivity(), R.id.txt_line1);
-        }
+//        if (mAdapter == null) {
+//            mAdapter = new SampleAdapter(getActivity(), R.id.txt_line1);
+//        }
+//
+//        if (mData == null) {
+//            mData = SampleData.generateSampleData();
+//
+//        }
+//
+//        for (String data : mData) {
+//            mAdapter.add(data);
+//        }
 
-        if (mData == null) {
-            mData = SampleData.generateSampleData();
-        }
-
-        for (String data : mData) {
-            mAdapter.add(data);
-        }
-
-        mGridView.setAdapter(mAdapter);
-        mGridView.setOnScrollListener(this);
-        mGridView.setOnItemClickListener(this);
-
+//        mGridView.setAdapter(mAdapter);
+//        mGridView.setOnScrollListener(this);
+//        mGridView.setOnItemClickListener(this);
+        recyclerView.setAdapter(mcAdapter);
         return view;
     }
 
@@ -154,6 +175,12 @@ public class CommunityFragment extends Fragment implements
             communityFragment = new CommunityFragment();
         }
         return communityFragment;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putStringArrayList("data", mData);
     }
 
 }

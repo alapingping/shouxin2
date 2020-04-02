@@ -3,11 +3,13 @@ package com.shouxin.shouxin.Adapter;
 import android.content.Context;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.etsy.android.grid.util.DynamicHeightTextView;
@@ -68,10 +70,12 @@ public class SampleAdapter extends ArrayAdapter<String> {
 
         convertView.setBackgroundResource(mBackgroundColors.get(backgroundIndex));
 
+
         Log.d(TAG, "getView position:" + position + " h:" + positionHeight);
 
         vh.txtLineOne.setHeightRatio(positionHeight);
         vh.txtLineOne.setText(getItem(position) + position);
+        vh.txtLineOne.setGravity(Gravity.BOTTOM);
 
         vh.btnGo.setOnClickListener(new View.OnClickListener() {
             @Override

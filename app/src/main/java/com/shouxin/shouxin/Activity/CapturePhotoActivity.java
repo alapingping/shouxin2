@@ -1,4 +1,4 @@
-package com.shouxin.shouxin.Views;
+package com.shouxin.shouxin.Activity;
 
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -13,8 +13,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.MessageQueue;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceHolder;

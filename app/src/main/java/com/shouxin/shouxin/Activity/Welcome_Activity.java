@@ -1,4 +1,4 @@
-package com.shouxin.shouxin.Views;
+package com.shouxin.shouxin.Activity;
 
 import com.shouxin.shouxin.R;
 import com.shouxin.shouxin.Utils.PermissionManager;
@@ -10,10 +10,10 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
@@ -35,16 +35,15 @@ public class Welcome_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome_);
-        PermissionManager permission = new PermissionManager();
-        permission.verifyStoragePermissions(Welcome_Activity.this);
-        permission.verifyAccessNetPermissions(Welcome_Activity.this);
+//        PermissionManager permission = new PermissionManager();
+        PermissionManager.verifyStoragePermissions(Welcome_Activity.this);
+        PermissionManager.verifyAccessNetPermissions(Welcome_Activity.this);
         requestMultiplePermissions();
 
 
     }
 
     public void onClickStart(View view) {
-//       Intent intent = new Intent(this, Login_Activity.class);
         Intent intent = new Intent(this, Login_Activity.class);
         startActivity(intent);
     }
@@ -178,7 +177,6 @@ public class Welcome_Activity extends AppCompatActivity {
         intent.setData(Uri.parse(PACKAGE_URL_SCHEME + getPackageName()));
         startActivityForResult(intent, OPEN_SETTING_REQUEST_COED);
     }
-
 
 
     @Override

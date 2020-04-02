@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     defaultConfig {
         applicationId "com.shouxin.shouxin"
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
@@ -17,6 +17,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    buildToolsVersion = '28.0.3'
+    compileOptions {
+        targetCompatibility = 1.8
+        sourceCompatibility = 1.8
+    }
+
+    viewBinding {
+        enabled = true
+    }
+    dataBinding {
+        enabled = true
+    }
+
 }
 
 repositories {
@@ -28,48 +41,38 @@ repositories {
 dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:27.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    implementation 'com.android.support:design:27.1.0'
-    implementation 'com.android.support:support-v4:27.1.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    androidTestCompile('com.android.support:support-annotations:26.1.0') {
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-        force = true
-
-    }
     //import circleimageview
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
-//    compile 'com.squareup.okhttp3:okhttp:3.7.0'
-
-    implementation 'com.squareup.okio:okio:1.12.0'
+    implementation 'com.squareup.okio:okio:1.14.0'
 
     //import retrofit2,okhttp
-    implementation('com.squareup.retrofit2:retrofit:2.1.0') {
-        exclude group: 'com.squareup.okhttp3'
-    }
-    implementation('com.squareup.retrofit2:converter-gson:2.1.0') {
-        //        exclude group: 'com.google.code.gson'
-        exclude group: 'com.squareup.okhttp3'
-    }
-    implementation('com.squareup.okhttp3:okhttp:3.3.0')
+    implementation('com.squareup.okhttp3:okhttp:3.10.0')
 
     // TensorFlow
     implementation 'org.tensorflow:tensorflow-android:1.13.1'
-
-    implementation 'com.github.bumptech.glide:glide:4.6.1'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
+    //glide
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
+    annotationProcessor 'androidx.annotation:annotation:1.1.0'
+    //rxjava
+    implementation 'io.reactivex:rxjava:1.1.1'
+    implementation 'io.reactivex:rxandroid:1.0.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava:2.0.2'
 
     implementation 'com.github.yalantis:Side-Menu.Android:1.0.1'
     implementation 'com.github.ozodrukh:CircularReveal:2.1.0'
-
     implementation 'com.etsy.android.grid:library:1.0.5' // see changelog
-
     implementation 'com.yalantis:phoenix:1.2.3'
-
-    compile files("libs/jsoup-1.11.3.jar")
+    implementation files("libs/jsoup-1.11.3.jar")
 
 }

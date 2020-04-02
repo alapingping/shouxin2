@@ -1,17 +1,16 @@
 package com.shouxin.shouxin.Adapter;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.shouxin.shouxin.DataModel.ItemEntry;
 import com.shouxin.shouxin.R;
-import com.shouxin.shouxin.Views.SingleWordActivity;
+import com.shouxin.shouxin.Activity.SingleWordActivity;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -4,15 +4,15 @@ package com.shouxin.shouxin.fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.shouxin.shouxin.Views.CapturePhotoActivity;
+import com.shouxin.shouxin.Activity.CapturePhotoActivity;
 import com.shouxin.shouxin.R;
-import com.shouxin.shouxin.Views.TakeTrainSetActivity;
+import com.shouxin.shouxin.Activity.TakeTrainSetActivity;
 
 import yalantis.com.sidemenu.interfaces.ScreenShotable;
 
