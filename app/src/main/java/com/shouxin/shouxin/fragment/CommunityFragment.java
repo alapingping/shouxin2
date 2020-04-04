@@ -1,6 +1,5 @@
 package com.shouxin.shouxin.fragment;
 
-
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
@@ -8,6 +7,9 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Handler;
+import android.os.Parcel;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,14 +20,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.etsy.android.grid.StaggeredGridView;
+import com.shouxin.shouxin.API.Client;
+import com.shouxin.shouxin.API.Service;
 import com.shouxin.shouxin.Adapter.CommunityAdapter;
 import com.shouxin.shouxin.Adapter.SampleAdapter;
+import com.shouxin.shouxin.DataModel.Message;
 import com.shouxin.shouxin.DataModel.SampleData;
+import com.shouxin.shouxin.DataModel.User;
 import com.shouxin.shouxin.R;
 import com.yalantis.phoenix.PullToRefreshView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
 import yalantis.com.sidemenu.interfaces.ScreenShotable;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
@@ -38,22 +52,19 @@ public class CommunityFragment extends Fragment implements
 
     private StaggeredGridView mGridView;
     private boolean mHasRequestedMore;
-    private SampleAdapter mAdapter;
 
-    private CommunityAdapter mcAdapter;
+    private CommunityAdapter mAdapter;
     private RecyclerView recyclerView;
 
+    private ArrayList<Message> messages;
 
     private PullToRefreshView mPullToRefreshView;
 
     private static CommunityFragment communityFragment = new CommunityFragment();
 
-    private ArrayList<String> mData;
-
     public CommunityFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,6 +73,7 @@ public class CommunityFragment extends Fragment implements
         View view =  inflater.inflate(R.layout.fragment_community, container, false);
 
         recyclerView = view.findViewById(R.id.recycler);
+        messages = new ArrayList<>();
 //        mGridView = (StaggeredGridView) view.findViewById(R.id.grid_view);
         mPullToRefreshView = (PullToRefreshView) view.findViewById(R.id.pull_to_refresh);
         mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
@@ -88,17 +100,12 @@ public class CommunityFragment extends Fragment implements
             txtHeaderTitle.setText("下拉刷新");
             txtFooterTitle.setText("没有更多内容啦!");
 
-
-            mData = new ArrayList<>();
-            mData.add("1");
-            mData.add("2");
-            mData.add("3");
-            mcAdapter = new CommunityAdapter(mData, getActivity());
+            mAdapter = new CommunityAdapter(messages, getActivity());
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 //            mGridView.addHeaderView(header);
 //            mGridView.addFooterView(footer);
         } else {
-            mData = savedInstanceState.getStringArrayList("data");
+            messages = savedInstanceState.getParcelableArrayList("data");
         }
 
 //        if (mAdapter == null) {
@@ -117,7 +124,8 @@ public class CommunityFragment extends Fragment implements
 //        mGridView.setAdapter(mAdapter);
 //        mGridView.setOnScrollListener(this);
 //        mGridView.setOnItemClickListener(this);
-        recyclerView.setAdapter(mcAdapter);
+        getAllMessages();
+        recyclerView.setAdapter(mAdapter);
         return view;
     }
 
@@ -138,22 +146,22 @@ public class CommunityFragment extends Fragment implements
             if (lastInScreen >= totalItemCount) {
                 Log.d(TAG, "onScroll lastInScreen - so load more");
                 mHasRequestedMore = true;
-                onLoadMoreItems();
+//                onLoadMoreItems();
             }
         }
     }
 
-    private void onLoadMoreItems() {
-        final ArrayList<String> sampleData = SampleData.generateSampleData();
-        for (String data : sampleData) {
-            mAdapter.add(data);
-        }
-        // stash all the data in our backing store
-        mData.addAll(sampleData);
-        // notify the adapter that we can update now
-        mAdapter.notifyDataSetChanged();
-        mHasRequestedMore = false;
-    }
+//    private void onLoadMoreItems() {
+//        final ArrayList<String> sampleData = SampleData.generateSampleData();
+//        for (String data : sampleData) {
+//            mAdapter.add(data);
+//        }
+//        // stash all the data in our backing store
+//        mData.addAll(sampleData);
+//        // notify the adapter that we can update now
+//        mAdapter.notifyDataSetChanged();
+//        mHasRequestedMore = false;
+//    }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -180,7 +188,50 @@ public class CommunityFragment extends Fragment implements
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putStringArrayList("data", mData);
+        outState.putParcelableArrayList("data", messages);
+    }
+
+    public void getAllMessages() {
+
+        Service service = Client.retrofit.create(Service.class);
+        Call<ResponseBody> call = service.getAllMessages();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                try {
+                    String result = response.body().string();
+                    JSONObject object = new JSONObject(result);
+                    int code = object.getInt("code");
+                    if (code == 200) {
+                        JSONArray array = object.getJSONArray("datas");
+                        Array2Messages(array);
+                        mAdapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(getActivity(), "查询失败", Toast.LENGTH_SHORT);
+                    }
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("1", "1");
+            }
+
+        });
+    }
+
+    private void Array2Messages(JSONArray array) throws JSONException {
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject object = array.getJSONObject(i);
+            Parcel parcel = Parcel.obtain();
+            String username = object.getString("username");
+            String content = object.getString("content");
+            String time = object.getString("time");
+            Message message = new Message(username, content, time);
+            messages.add(message);
+        }
     }
 
 }

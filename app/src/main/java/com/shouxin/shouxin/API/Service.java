@@ -19,4 +19,7 @@ public interface Service {
     @GET("/api/user/login")
     Call<ResponseBody> login(@Query("username") String username, @Query("password") String password);
 
+    @GET("/api/message/getAll")
+    Call<ResponseBody> getAllMessages();
+
 }
