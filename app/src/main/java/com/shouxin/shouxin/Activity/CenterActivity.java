@@ -112,6 +112,7 @@ public class CenterActivity extends AppCompatActivity implements ViewAnimator.Vi
             }
 
             /** Called when a drawer has settled in a completely open state. */
+            @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
             }

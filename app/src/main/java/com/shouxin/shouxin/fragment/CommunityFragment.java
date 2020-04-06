@@ -1,15 +1,13 @@
 package com.shouxin.shouxin.fragment;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
-import android.os.Parcel;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,12 +20,10 @@ import android.widget.Toast;
 import com.etsy.android.grid.StaggeredGridView;
 import com.shouxin.shouxin.API.Client;
 import com.shouxin.shouxin.API.Service;
+import com.shouxin.shouxin.Activity.EditMessageActivity;
 import com.shouxin.shouxin.Adapter.CommunityAdapter;
-import com.shouxin.shouxin.Adapter.SampleAdapter;
 import com.shouxin.shouxin.DataModel.Message;
-import com.shouxin.shouxin.DataModel.SampleData;
-import com.shouxin.shouxin.DataModel.User;
-import com.shouxin.shouxin.R;
+import com.shouxin.shouxin.databinding.FragmentCommunityBinding;
 import com.yalantis.phoenix.PullToRefreshView;
 
 import org.json.JSONArray;
@@ -50,17 +46,19 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
 public class CommunityFragment extends Fragment implements
         AbsListView.OnScrollListener, AbsListView.OnItemClickListener, ScreenShotable {
 
-    private StaggeredGridView mGridView;
+    private FragmentCommunityBinding communityBinding;
+
     private boolean mHasRequestedMore;
 
     private CommunityAdapter mAdapter;
-    private RecyclerView recyclerView;
-
+    // 用户的动态
     private ArrayList<Message> messages;
-
+    // 判断数据是否变动过
+    private String lastMessages;
+    // 下拉刷新控件
     private PullToRefreshView mPullToRefreshView;
 
-    private static CommunityFragment communityFragment = new CommunityFragment();
+    private static volatile CommunityFragment communityFragment;
 
     public CommunityFragment() {
         // Required empty public constructor
@@ -70,52 +68,45 @@ public class CommunityFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_community, container, false);
-
-        recyclerView = view.findViewById(R.id.recycler);
-        messages = new ArrayList<>();
-//        mGridView = (StaggeredGridView) view.findViewById(R.id.grid_view);
-        mPullToRefreshView = (PullToRefreshView) view.findViewById(R.id.pull_to_refresh);
+        communityBinding = FragmentCommunityBinding.inflate(inflater,  container, false);
+        communityBinding.shareButton.setOnClickListener(
+                v -> {
+                    // 启动编辑动态界面
+                    Intent intent = new Intent(getActivity(), EditMessageActivity.class);
+                    startActivity(intent);
+                }
+        );
+        mPullToRefreshView = communityBinding.pullToRefresh;
         mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mPullToRefreshView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        // 向服务器获取数据
+                        getAllMessages();
                         mPullToRefreshView.setRefreshing(false);
                     }
                 }, 500);
             }
         });
 
-
-
         if (savedInstanceState == null) {
-            final LayoutInflater layoutInflater = getActivity().getLayoutInflater();
-
-            View header = layoutInflater.inflate(R.layout.list_item_header_footer, null);
-            View footer = layoutInflater.inflate(R.layout.list_item_header_footer, null);
-            TextView txtHeaderTitle = (TextView) header.findViewById(R.id.txt_title);
-            TextView txtFooterTitle = (TextView) footer.findViewById(R.id.txt_title);
-            txtHeaderTitle.setText("下拉刷新");
-            txtFooterTitle.setText("没有更多内容啦!");
-
+//            final LayoutInflater layoutInflater = getActivity().getLayoutInflater();
+//            View header = layoutInflater.inflate(R.layout.list_item_header_footer, null);
+//            View footer = layoutInflater.inflate(R.layout.list_item_header_footer, null);
+//            TextView txtHeaderTitle = (TextView) header.findViewById(R.id.txt_title);
+//            TextView txtFooterTitle = (TextView) footer.findViewById(R.id.txt_title);
+//            txtHeaderTitle.setText("下拉刷新");
+//            txtFooterTitle.setText("没有更多内容啦!");
+            messages = new ArrayList<>();
+            lastMessages = null;
             mAdapter = new CommunityAdapter(messages, getActivity());
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-//            mGridView.addHeaderView(header);
-//            mGridView.addFooterView(footer);
+            communityBinding.recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         } else {
             messages = savedInstanceState.getParcelableArrayList("data");
         }
 
-//        if (mAdapter == null) {
-//            mAdapter = new SampleAdapter(getActivity(), R.id.txt_line1);
-//        }
-//
-//        if (mData == null) {
-//            mData = SampleData.generateSampleData();
-//
-//        }
 //
 //        for (String data : mData) {
 //            mAdapter.add(data);
@@ -125,8 +116,8 @@ public class CommunityFragment extends Fragment implements
 //        mGridView.setOnScrollListener(this);
 //        mGridView.setOnItemClickListener(this);
         getAllMessages();
-        recyclerView.setAdapter(mAdapter);
-        return view;
+        communityBinding.recycler.setAdapter(mAdapter);
+        return communityBinding.getRoot();
     }
 
 
@@ -180,7 +171,11 @@ public class CommunityFragment extends Fragment implements
 
     public static CommunityFragment getInstance(){
         if(communityFragment == null){
-            communityFragment = new CommunityFragment();
+            synchronized (CommunityFragment.class) {
+                if (communityFragment == null) {
+                    communityFragment = new CommunityFragment();
+                }
+            }
         }
         return communityFragment;
     }
@@ -190,6 +185,12 @@ public class CommunityFragment extends Fragment implements
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList("data", messages);
     }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        Log.d("CommunityFragment-----", "onHiddenChanged");
+    }
+
 
     public void getAllMessages() {
 
@@ -204,8 +205,12 @@ public class CommunityFragment extends Fragment implements
                     int code = object.getInt("code");
                     if (code == 200) {
                         JSONArray array = object.getJSONArray("datas");
-                        Array2Messages(array);
-                        mAdapter.notifyDataSetChanged();
+                        if (!array.toString().equals(lastMessages)) {
+                            lastMessages = array.toString();
+                            Array2Messages(array);
+                            mAdapter.notifyDataSetChanged();
+                            Toast.makeText(getActivity(), "刷新成功", Toast.LENGTH_SHORT);
+                        }
                     } else {
                         Toast.makeText(getActivity(), "查询失败", Toast.LENGTH_SHORT);
                     }
@@ -225,12 +230,13 @@ public class CommunityFragment extends Fragment implements
     private void Array2Messages(JSONArray array) throws JSONException {
         for (int i = 0; i < array.length(); i++) {
             JSONObject object = array.getJSONObject(i);
-            Parcel parcel = Parcel.obtain();
             String username = object.getString("username");
             String content = object.getString("content");
             String time = object.getString("time");
             Message message = new Message(username, content, time);
-            messages.add(message);
+            if (!messages.contains(message)) {
+                messages.add(message);
+            }
         }
     }
 

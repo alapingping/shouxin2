@@ -11,7 +11,6 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
-        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:hardwareAccelerated="false"
         android:icon="@drawable/ic_app_icon"
@@ -19,8 +18,10 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".Activity.SingleWordActivity"></activity>
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".Activity.EditMessageActivity"></activity>
+        <activity android:name=".Activity.SingleWordActivity" />
         <activity
             android:name=".Activity.BottomNavigationActivity"
             android:label="@string/title_activity_bottom_navigation">
@@ -33,11 +34,13 @@
         <activity android:name=".Activity.CenterActivity" />
         <activity android:name=".Activity.TakeTrainSetActivity" />
         <activity android:name=".Activity.Welcome_Activity">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".Activity.Login_Activity"

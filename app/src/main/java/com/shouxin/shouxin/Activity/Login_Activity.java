@@ -205,7 +205,7 @@ public class Login_Activity extends AppCompatActivity {
                     break;
                 case LOGIN_SUCCESS:
                     Toast.makeText(activity.get(),msg.obj.toString(),Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(activity.get(), CenterActivity.class);
+                    Intent intent = new Intent(activity.get(), BottomNavigationActivity.class);
                     activity.get().finish();
                     activity.get().startActivity(intent);
                     break;

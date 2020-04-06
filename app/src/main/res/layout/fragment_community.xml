@@ -3,21 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.CommunityFragment">
 
     <com.yalantis.phoenix.PullToRefreshView
         android:id="@+id/pull_to_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <!--<com.etsy.android.grid.StaggeredGridView-->
-            <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
-            <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
-            <!--android:id="@+id/grid_view"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--app:item_margin="30dp"-->
-            <!--app:column_count="2" />-->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler"
@@ -26,5 +18,14 @@
         </androidx.recyclerview.widget.RecyclerView>
 
     </com.yalantis.phoenix.PullToRefreshView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/share_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="80dp"
+        android:layout_marginRight="15dp"
+        app:srcCompat="@drawable/ic_add_24dp"/>
 
 </FrameLayout>

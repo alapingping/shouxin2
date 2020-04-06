@@ -71,4 +71,16 @@ public class Message implements Parcelable {
         dest.writeString(content);
         dest.writeString(time);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Message) {
+            Message message = (Message) obj;
+            return username.equals(((Message) obj).getUsername()) &&
+                    content.equals(((Message) obj).getContent()) &&
+                    time.equals(((Message) obj).getTime());
+        }
+        return false;
+    }
+
 }
