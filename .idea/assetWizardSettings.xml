@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/opt/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_autorenew_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/opt/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/navigation/ic_chevron_left_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,8 +28,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="3d7bf2" />
-                            <entry key="outputName" value="ic_translate_black_24dp" />
+                            <entry key="outputName" value="ic_chevron_left_black_24dp" />
                             <entry key="sourceFile" value="$USER_HOME$/下载/展开.svg" />
                           </map>
                         </option>

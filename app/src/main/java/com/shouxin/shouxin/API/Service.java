@@ -22,4 +22,7 @@ public interface Service {
     @GET("/api/message/getAll")
     Call<ResponseBody> getAllMessages();
 
+    @POST("/api/message/publishMessage")
+    Call<ResponseBody> publishMessage(@Body RequestBody body);
+
 }

@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.shouxin.shouxin.API.Client;
 import com.shouxin.shouxin.API.Service;
 import com.shouxin.shouxin.DataModel.User;
+import com.shouxin.shouxin.Utils.SPHelper;
 import com.shouxin.shouxin.databinding.ActivityLoginBinding;
 
 import org.json.JSONException;
@@ -39,7 +40,6 @@ public class Login_Activity extends AppCompatActivity {
     private static final int LOGIN_SUCCESS = 6;
 
     private final String serverUrl = "http://39.108.60.40:9050/user";
-    private final String PREFS_NAME = "USERINFOFILE";
     private ActivityLoginBinding loginBinding;
     private MyHandler loginHandler ;
     private User currUser;
@@ -178,10 +178,7 @@ public class Login_Activity extends AppCompatActivity {
     }
 
     public void saveUserInfo(User user) {
-        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("username", user.getName());
-        editor.apply();
+        SPHelper.saveUserInfo(this, user);
     }
 
     static class MyHandler extends Handler {

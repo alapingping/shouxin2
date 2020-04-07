@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class DictionaryFragment extends Fragment {
 
-    private static DictionaryFragment fragment;
+    private static volatile DictionaryFragment fragment;
 
     private List<SecondaryListAdapter.DataTree<String, ItemEntry>> datas = new ArrayList<>();
 
@@ -52,7 +52,11 @@ public class DictionaryFragment extends Fragment {
 
     public static DictionaryFragment getInstance(){
         if (fragment == null) {
-            fragment = new DictionaryFragment();
+            synchronized (DictionaryFragment.class) {
+                if (fragment == null) {
+                    fragment = new DictionaryFragment();
+                }
+            }
         }
         return fragment;
     }

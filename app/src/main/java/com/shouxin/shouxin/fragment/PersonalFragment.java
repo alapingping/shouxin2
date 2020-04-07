@@ -14,6 +14,8 @@ import android.widget.ListView;
 import com.shouxin.shouxin.Adapter.MenuAdapter;
 import com.shouxin.shouxin.Adapter.RvDividerItemDecoration;
 import com.shouxin.shouxin.R;
+import com.shouxin.shouxin.Utils.SPHelper;
+import com.shouxin.shouxin.databinding.FragmentPersonalBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +29,8 @@ public class PersonalFragment extends Fragment {
 
     private ArrayList<String> mdata;
     private RecyclerView recyclerView;
-    private static PersonalFragment fragment;
+    private static volatile PersonalFragment fragment;
+    private FragmentPersonalBinding binding;
 
     public PersonalFragment() {
         // Required empty public constructor
@@ -46,10 +49,13 @@ public class PersonalFragment extends Fragment {
      *
      * @return A new instance of fragment PersonalFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static PersonalFragment getInstance() {
         if (fragment == null) {
-            fragment = new PersonalFragment();
+            synchronized (PersonalFragment.class) {
+                if (fragment == null) {
+                    fragment = new PersonalFragment();
+                }
+            }
         }
         return fragment;
     }
@@ -63,13 +69,13 @@ public class PersonalFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_personal, container, false);
-
-        recyclerView = view.findViewById(R.id.menu);
+        binding = FragmentPersonalBinding.inflate(inflater, container, false);
+        binding.username.setText(SPHelper.getUsername(getContext()));
+        recyclerView = binding.menu;
         recyclerView.setAdapter(new MenuAdapter(this.mdata));
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new RvDividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
-        return view;
+        return binding.getRoot();
     }
 
 

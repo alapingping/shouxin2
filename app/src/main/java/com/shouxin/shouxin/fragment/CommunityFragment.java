@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -73,7 +74,7 @@ public class CommunityFragment extends Fragment implements
                 v -> {
                     // 启动编辑动态界面
                     Intent intent = new Intent(getActivity(), EditMessageActivity.class);
-                    startActivity(intent);
+                    startActivityForResult(intent, 1);
                 }
         );
         mPullToRefreshView = communityBinding.pullToRefresh;
@@ -193,7 +194,6 @@ public class CommunityFragment extends Fragment implements
 
 
     public void getAllMessages() {
-
         Service service = Client.retrofit.create(Service.class);
         Call<ResponseBody> call = service.getAllMessages();
         call.enqueue(new Callback<ResponseBody>() {
@@ -235,9 +235,30 @@ public class CommunityFragment extends Fragment implements
             String time = object.getString("time");
             Message message = new Message(username, content, time);
             if (!messages.contains(message)) {
-                messages.add(message);
+                messages.add(0, message);
             }
         }
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        switch (resultCode) {
+            // 分享成功
+            case 1:
+                Message message = data.getParcelableExtra("newMessage");
+                messages.add(0, message);
+                mAdapter.notifyDataSetChanged();
+                break;
+             // 分享失败
+            case -1:
+                Toast.makeText(getActivity(), "分享失败", Toast.LENGTH_SHORT);
+                break;
+            default:
+                break;
+        }
+
+    }
+
 
 }

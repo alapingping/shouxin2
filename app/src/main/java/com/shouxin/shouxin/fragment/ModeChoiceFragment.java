@@ -24,7 +24,7 @@ public class ModeChoiceFragment extends Fragment implements ScreenShotable {
     Button takePicBtn;
     Button takeTrainsetBtn;
 
-    private static ModeChoiceFragment modeChoiceFragment = new ModeChoiceFragment();
+    private static volatile ModeChoiceFragment modeChoiceFragment;
 
     public ModeChoiceFragment() {
         // Required empty public constructor
@@ -32,7 +32,11 @@ public class ModeChoiceFragment extends Fragment implements ScreenShotable {
 
     public static ModeChoiceFragment getInstance(){
         if(modeChoiceFragment == null){
-            modeChoiceFragment = new ModeChoiceFragment();
+            synchronized (ModeChoiceFragment.class) {
+                if (modeChoiceFragment == null) {
+                    modeChoiceFragment = new ModeChoiceFragment();
+                }
+            }
         }
         return modeChoiceFragment;
     }
