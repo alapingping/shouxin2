@@ -100,12 +100,15 @@ public class CommunityFragment extends Fragment implements
 //            TextView txtFooterTitle = (TextView) footer.findViewById(R.id.txt_title);
 //            txtHeaderTitle.setText("下拉刷新");
 //            txtFooterTitle.setText("没有更多内容啦!");
+
             messages = new ArrayList<>();
             lastMessages = null;
+            getAllMessages();
             mAdapter = new CommunityAdapter(messages, getActivity());
             communityBinding.recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         } else {
             messages = savedInstanceState.getParcelableArrayList("data");
+            lastMessages = savedInstanceState.getString("lastMessages");
         }
 
 //
@@ -116,7 +119,6 @@ public class CommunityFragment extends Fragment implements
 //        mGridView.setAdapter(mAdapter);
 //        mGridView.setOnScrollListener(this);
 //        mGridView.setOnItemClickListener(this);
-        getAllMessages();
         communityBinding.recycler.setAdapter(mAdapter);
         return communityBinding.getRoot();
     }
@@ -185,6 +187,7 @@ public class CommunityFragment extends Fragment implements
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList("data", messages);
+        outState.putString("lastMessages", lastMessages);
     }
 
     @Override
@@ -228,15 +231,14 @@ public class CommunityFragment extends Fragment implements
     }
 
     private void Array2Messages(JSONArray array) throws JSONException {
+        messages.clear();
         for (int i = 0; i < array.length(); i++) {
             JSONObject object = array.getJSONObject(i);
             String username = object.getString("username");
             String content = object.getString("content");
             String time = object.getString("time");
             Message message = new Message(username, content, time);
-            if (!messages.contains(message)) {
-                messages.add(0, message);
-            }
+            messages.add(message);
         }
     }
 

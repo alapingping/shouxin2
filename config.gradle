@@ -1,0 +1,61 @@
+ext {
+
+    android = [
+            compileSdkVersion   :28,
+            minSdkVersion       :21,
+            targetSdkVersion    :28,
+            versionCode         :1,
+            versionName         :"1.0"
+    ]
+
+
+    versions = [
+            appcompat       : "1.1.0",
+            annotation      : "1.1.0",
+            constraintlayout: "1.1.3",
+            material        : "1.1.0",
+            legacy          : "1.0.0",
+            circleimageview : "2.2.0",
+            okio            : "1.14.0",
+            okhttp          : "3.10.0",
+            tensorflow      : "1.13.1",
+            glide           : "4.8.0",
+            rxjava          : "1.1.1",
+            rxandroid       : "1.0.1",
+            retrofit        : "2.4.0",
+            CircularReveal  : "2.1.0",
+            library         : "1.0.5",
+            phoenix         : "1.2.3",
+            room            : "2.2.5"
+    ]
+
+    dependencies = [
+            appcompat       : "androidx.appcompat:appcompat:${versions.appcompat}",
+            annotation      : "androidx.annotation:annotation:${versions.annotation}",
+            constraintlayout: "androidx.constraintlayout:constraintlayout:${versions.constraintlayout}",
+            legacy          : "androidx.legacy:legacy-support-v4:${versions.legacy}",
+            room            : "androidx.room:room-runtime:${versions.room}",
+            roomComplier    : "androidx.room:room-compiler:${versions.room}",
+
+            material        : "com.google.android.material:material:${versions.material}",
+
+            tensorflow      : "org.tensorflow:tensorflow-android:${versions.tensorflow}",
+
+            rxjava          : "io.reactivex:rxjava:${versions.rxjava}",
+            rxandroid       : "io.reactivex:rxandroid:${versions.rxandroid}",
+
+            okio            : "com.squareup.okio:okio:${versions.okio}",
+            okhttp          : "com.squareup.okhttp3:okhttp:${versions.okhttp}",
+            retrofit        : "com.squareup.retrofit2:retrofit:${versions.retrofit}",
+            converterGson   : "com.squareup.retrofit2:converter-gson:${versions.retrofit}",
+            adapterRxjava   : "com.squareup.retrofit2:adapter-rxjava:${versions.retrofit}",
+
+            glide           : "com.github.bumptech.glide:glide:${versions.glide}",
+            CircularReveal  : "com.github.ozodrukh:CircularReveal:${versions.CircularReveal}",
+
+            library         : "com.etsy.android.grid:library:${versions.library}",
+            phoenix         : "com.yalantis:phoenix:${versions.phoenix}",
+            circleimageview : "de.hdodenhof:circleimageview:${versions.circleimageview}",
+    ]
+
+}
