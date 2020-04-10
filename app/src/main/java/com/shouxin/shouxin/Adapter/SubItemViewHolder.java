@@ -14,8 +14,7 @@ public class SubItemViewHolder extends RecyclerView.ViewHolder {
     public SubItemViewHolder(View itemView) {
         super(itemView);
 
-        tvSub = (TextView) itemView.findViewById(R.id.word);
-
+        tvSub = itemView.findViewById(R.id.word);
     }
 
 }

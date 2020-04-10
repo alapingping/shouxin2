@@ -7,6 +7,11 @@ import java.sql.Timestamp;
 
 public class Message implements Parcelable {
 
+    private String username;
+    private String content;
+    private String time;
+
+
     public Message(String username, String content, String time) {
         this.username = username;
         this.content = content;
@@ -54,10 +59,6 @@ public class Message implements Parcelable {
     public void setTime(String time) {
         this.time = time;
     }
-
-    private String username;
-    private String content;
-    private String time;
 
     @Override
     public int describeContents() {

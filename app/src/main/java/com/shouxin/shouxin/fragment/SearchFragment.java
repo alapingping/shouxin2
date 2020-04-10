@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import com.shouxin.shouxin.DataModel.ItemEntry;
+import com.shouxin.shouxin.DataModel.Word;
 import com.shouxin.shouxin.R;
 import com.shouxin.shouxin.database.DaoImpl.ItemEntryDaoImpl;
 
@@ -36,7 +36,7 @@ public class SearchFragment extends Fragment {
     SearchView searchView;
 
     Drawable drawable;
-    ItemEntry itemEntry = new ItemEntry();
+    Word word = new Word();
 
     private static Fragment searchFragment = new SearchFragment();
 
@@ -47,9 +47,9 @@ public class SearchFragment extends Fragment {
         public void handleMessage(Message msg){
             if(msg.what == 1)
                 imageView.setBackground(drawable);
-            wordDescription.setText(itemEntry.getDescription());
-            wordTitle.setText(itemEntry.getName());
-            StoreData(itemEntry);
+            wordDescription.setText(word.getDescription());
+            wordTitle.setText(word.getName());
+            StoreData(word);
         }
 
     };
@@ -91,15 +91,15 @@ public class SearchFragment extends Fragment {
         final String BASE_URL = "https://shouyu.51240.com/";
         final String POSTFIX = "__shouyus/";
         String url = BASE_URL + WordName + POSTFIX;
-        itemEntry.setPictureUrl(url);
+        word.setPictureUrl(url);
 
         Document doc = Jsoup.connect(url).timeout(5000).get();
         Elements pngs = doc.select("img[src$=.png]");
-        itemEntry.setName(WordName);
+        word.setName(WordName);
         drawable = png2Drawable(pngs.get(0).attr("src").substring(2));
 
         Elements titles = doc.select("td[bgcolor=#FFFFFF]");
-        itemEntry.setDescription(titles.get(0).text());
+        word.setDescription(titles.get(0).text());
 
     }
 
@@ -114,9 +114,9 @@ public class SearchFragment extends Fragment {
         return localDrawable;
     }
 
-    public void StoreData(ItemEntry itemEntry){
+    public void StoreData(Word word){
         ItemEntryDaoImpl iedi = new ItemEntryDaoImpl(getContext());
-        iedi.add(itemEntry);
+        iedi.add(word);
     }
 
     private SearchView.OnQueryTextListener listener = new SearchView.OnQueryTextListener(){
@@ -131,7 +131,7 @@ public class SearchFragment extends Fragment {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    if(itemEntry.getDescription().equals("（暂无该词手语）"))
+                    if(SearchFragment.this.word.getDescription().equals("（暂无该词手语）"))
                         mainHandler.sendEmptyMessage(0);
                     else
                         mainHandler.sendEmptyMessage(1);

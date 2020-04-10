@@ -4,9 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
-import com.shouxin.shouxin.DataModel.ItemEntry;
+import com.shouxin.shouxin.DataModel.Word;
 import com.shouxin.shouxin.database.Dao.ItemEntryDao;
 import com.shouxin.shouxin.database.util.DBHelper;
 
@@ -20,13 +19,13 @@ public class ItemEntryDaoImpl implements ItemEntryDao {
 
 
     @Override
-    public void add(ItemEntry itemEntry) {
+    public void add(Word word) {
 
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("name", itemEntry.getName());
-        values.put("description", itemEntry.getDescription());
-        values.put("pictureUrl", itemEntry.getPictureUrl());
+        values.put("name", word.getName());
+        values.put("description", word.getDescription());
+        values.put("pictureUrl", word.getPictureUrl());
         db.insert("ItemEntry", null, values);
         db.close();
 
@@ -40,23 +39,23 @@ public class ItemEntryDaoImpl implements ItemEntryDao {
     }
 
     @Override
-    public void update(ItemEntry itemEntry) {
+    public void update(Word word) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("name", itemEntry.getName());
-        values.put("description", itemEntry.getDescription());
-        values.put("pictureUrl", itemEntry.getPictureUrl());
-        db.update("ItemEntry", values, "name=?", new String[]{itemEntry.getName()});
+        values.put("name", word.getName());
+        values.put("description", word.getDescription());
+        values.put("pictureUrl", word.getPictureUrl());
+        db.update("ItemEntry", values, "name=?", new String[]{word.getName()});
         db.close();
     }
 
     @Override
-    public ItemEntry findById(String name) {
+    public Word findById(String name) {
         SQLiteDatabase db = helper.getWritableDatabase();
-        ItemEntry item = null;
+        Word item = null;
         Cursor cursor = db.query("ItemEntry", null, "name=?", new String[]{name}, null, null, null);
         if(cursor.moveToNext()){
-            item = new ItemEntry();
+            item = new Word();
             item.setName(cursor.getString(1));
             item.setDescription(cursor.getString(2));
             item.setPictureUrl(cursor.getString(3));

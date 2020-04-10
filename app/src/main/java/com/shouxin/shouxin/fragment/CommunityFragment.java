@@ -250,7 +250,7 @@ public class CommunityFragment extends Fragment implements
             case 1:
                 Message message = data.getParcelableExtra("newMessage");
                 messages.add(0, message);
-                mAdapter.notifyDataSetChanged();
+                mAdapter.notifyItemInserted(0);
                 break;
              // 分享失败
             case -1:

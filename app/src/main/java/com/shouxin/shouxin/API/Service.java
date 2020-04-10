@@ -25,4 +25,13 @@ public interface Service {
     @POST("/api/message/publishMessage")
     Call<ResponseBody> publishMessage(@Body RequestBody body);
 
+    @GET("/api/word/getAll")
+    Call<ResponseBody> getAllWords();
+
+    @GET("/api/word/getWords")
+    Call<ResponseBody> getWordsByCategory(@Query("category") String category);
+
+    @GET("/api/word/getCategories")
+    Call<ResponseBody> getCategories();
+
 }

@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.shouxin.shouxin.DataModel.ItemEntry;
+import com.shouxin.shouxin.DataModel.Word;
 import com.shouxin.shouxin.R;
 import com.shouxin.shouxin.Activity.SingleWordActivity;
 
@@ -19,7 +19,7 @@ public class RecyclerAdapter extends SecondaryListAdapter<GroupItemViewHolder, S
 
     private Context context;
 
-    private List<DataTree<String, ItemEntry>> dts = new ArrayList<>();
+    private List<DataTree<String, Word>> dts = new ArrayList<>();
 
     public RecyclerAdapter(Context context) {
         this.context = context;
@@ -56,7 +56,7 @@ public class RecyclerAdapter extends SecondaryListAdapter<GroupItemViewHolder, S
     @Override
     public void onSubItemBindViewHolder(RecyclerView.ViewHolder holder, int groupItemIndex, int subItemIndex) {
 
-        ((SubItemViewHolder) holder).tvSub.setText(dts.get(groupItemIndex).getSubItems().get(subItemIndex).getName());
+        ((SubItemViewHolder) holder).tvSub.setText("\t\t" + dts.get(groupItemIndex).getSubItems().get(subItemIndex).getName());
 
     }
 
@@ -74,7 +74,7 @@ public class RecyclerAdapter extends SecondaryListAdapter<GroupItemViewHolder, S
     @Override
     public void onSubItemClick(SubItemViewHolder holder, int groupItemIndex, int subItemIndex) {
 
-        ItemEntry word = dts.get(groupItemIndex).getSubItems().get(subItemIndex);
+        Word word = dts.get(groupItemIndex).getSubItems().get(subItemIndex);
         Bundle bundle = new Bundle();
         bundle.putSerializable("word", word);
 

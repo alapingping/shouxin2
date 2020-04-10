@@ -1,14 +1,12 @@
 package com.shouxin.shouxin.database.Dao;
 
-import android.content.ClipData;
-
-import com.shouxin.shouxin.DataModel.ItemEntry;
+import com.shouxin.shouxin.DataModel.Word;
 
 public interface ItemEntryDao {
 
-    void add(ItemEntry itemEntry);
+    void add(Word word);
     void remove(String name);
-    void update(ItemEntry itemEntry);
-    ItemEntry findById(String name);
+    void update(Word word);
+    Word findById(String name);
 
 }

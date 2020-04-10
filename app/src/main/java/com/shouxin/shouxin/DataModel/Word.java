@@ -2,21 +2,29 @@ package com.shouxin.shouxin.DataModel;
 
 import java.io.Serializable;
 
-public class ItemEntry implements Serializable {
+public class Word implements Serializable {
 
-    public ItemEntry(){}
 
-    public ItemEntry(String name, String description, String pictureUrl){
+    public String category;
+    public String name;
+    public String description;
+    public String pictureUrl;
+
+    public Word(){}
+
+    public Word(String name, String description, String pictureUrl){
         this.name = name;
         this.description = description;
         this.pictureUrl = pictureUrl;
     }
 
-    private String name;
+    public String getCategory() {
+        return category;
+    }
 
-    private String description;
-
-    private String pictureUrl;
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
     public String getName() {
         return name;
