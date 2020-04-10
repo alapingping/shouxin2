@@ -1,18 +1,14 @@
 package com.shouxin.shouxin.Activity;
 
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.os.Message;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import  androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.shouxin.shouxin.DataModel.Word;
@@ -25,6 +21,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 public class SingleWordActivity extends AppCompatActivity {
 
@@ -85,6 +82,7 @@ public class SingleWordActivity extends AppCompatActivity {
 //                }).start();
 //            }
 //        });
+
     }
 
     @Override

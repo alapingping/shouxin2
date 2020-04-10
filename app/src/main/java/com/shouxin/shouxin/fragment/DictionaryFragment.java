@@ -1,11 +1,16 @@
 package com.shouxin.shouxin.fragment;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +21,7 @@ import com.shouxin.shouxin.Adapter.RecyclerAdapter;
 import com.shouxin.shouxin.Adapter.RvDividerItemDecoration;
 import com.shouxin.shouxin.Adapter.SecondaryListAdapter;
 import com.shouxin.shouxin.DataModel.Word;
+import com.shouxin.shouxin.database.Repository.WordRepository;
 import com.shouxin.shouxin.databinding.FragmentDictionaryBinding;
 
 import org.json.JSONArray;
@@ -23,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +48,8 @@ public class DictionaryFragment extends Fragment {
     private List<SecondaryListAdapter.DataTree<String, Word>> datas;
     private List<Word> words;
     private RecyclerAdapter mAdapter;
+    private WordRepository mRepository;
+    private MyHandler mHandler;
 
     public static DictionaryFragment getInstance(){
         if (fragment == null) {
@@ -58,6 +67,7 @@ public class DictionaryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentDictionaryBinding.inflate(inflater, container, false);
+        mHandler = new MyHandler(getActivity());
         datas = new ArrayList<>();
         getAllWords();
         RecyclerView rv = binding.recycler;
@@ -74,7 +84,20 @@ public class DictionaryFragment extends Fragment {
     }
 
     private void getAllWords() {
+        new Thread(() -> {
+            mRepository = new WordRepository(getActivity().getApplication());
+            words = mRepository.getAllWords();
+            Message message = Message.obtain();
+            if (words.size() == 0) {
+                message.what = 0;
+            } else {
+                message.what = 1;
+            }
+            mHandler.handleMessage(message);
+        }).start();
+    }
 
+    private void getWordsFromServer() {
         Service service = Client.retrofit.create(Service.class);
         Call<ResponseBody> call = service.getAllWords();
         call.enqueue(new Callback<ResponseBody>() {
@@ -98,24 +121,8 @@ public class DictionaryFragment extends Fragment {
 
             }
         });
-
-//        List<Word> items = new ArrayList<Word>(){{
-//            add(new Word("a","一个苹果", "图片路径1"));
-//            add(new Word("b","一个鸭梨", "图片路径2"));
-//            add(new Word("c","一个榴莲", "图片路径3"));
-//        }};
-//        List<String> groups = new ArrayList<String>(){{
-//            add("字母");add("称谓");add("职业");add("姓氏");add("衣物");
-//            add("食品");add("社交");add("时间");add("空间");add("生活");}};
-//
-//        for (String groupName:groups) {
-//
-//            datas.add(new SecondaryListAdapter.DataTree<String, Word>(groupName,
-//                    items)
-//            );
-//        }
-
     }
+
 
     private void Array2Words(JSONArray array) throws JSONException {
         if (array.length() == 0) {return ;}
@@ -129,12 +136,59 @@ public class DictionaryFragment extends Fragment {
                 words = new ArrayList<>();
                 curCategory = category;
             }
-            words.add(new Word(object.getString("name"),
+            Word word = new Word(category,
+                    object.getString("name"),
                     object.getString("description"),
-                    object.getString("pictureURL")));
+                    object.getString("pictureURL"));
+            words.add(word);
+            mRepository.insert(word);
         }
         datas.add(new SecondaryListAdapter.DataTree<String, Word>(curCategory, words));
+
     }
 
+    private void getWordsFromLocal() {
+
+        String curCategory = words.get(0).getCategory();
+        List<Word> subWords = new ArrayList<>();
+        for (Word word:words) {
+            if (!word.getCategory().equals(curCategory)) {
+                datas.add(new SecondaryListAdapter.DataTree<>(curCategory, subWords));
+                subWords = new ArrayList<>();
+                curCategory = word.getCategory();
+            }
+            subWords.add(word);
+        }
+        datas.add(new SecondaryListAdapter.DataTree<>(curCategory, subWords));
+        mAdapter.notifyNewData(datas);
+    }
+
+    private class MyHandler extends Handler {
+
+        private WeakReference<Activity> activity;
+
+        public MyHandler(Activity activity) {
+            this.activity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+
+            switch (msg.what) {
+                case 0:
+                    // 需要从数据库提取数据
+                    getWordsFromServer();
+                    break;
+                case 1:
+                    // 从本地数据库提取数据
+                    getWordsFromLocal();
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
+    }
 
 }
