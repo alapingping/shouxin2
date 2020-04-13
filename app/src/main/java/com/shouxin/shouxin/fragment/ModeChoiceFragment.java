@@ -14,12 +14,10 @@ import com.shouxin.shouxin.Activity.CapturePhotoActivity;
 import com.shouxin.shouxin.R;
 import com.shouxin.shouxin.Activity.TakeTrainSetActivity;
 
-import yalantis.com.sidemenu.interfaces.ScreenShotable;
-
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ModeChoiceFragment extends Fragment implements ScreenShotable {
+public class ModeChoiceFragment extends Fragment {
 
     Button takePicBtn;
     Button takeTrainsetBtn;
@@ -65,15 +63,5 @@ public class ModeChoiceFragment extends Fragment implements ScreenShotable {
         });
 
         return view;
-    }
-
-    @Override
-    public void takeScreenShot() {
-
-    }
-
-    @Override
-    public Bitmap getBitmap() {
-        return null;
     }
 }

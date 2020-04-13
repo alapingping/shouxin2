@@ -9,12 +9,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.ArrayMap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.shouxin.shouxin.API.Client;
 import com.shouxin.shouxin.API.Service;
+import com.shouxin.shouxin.Activity.dummy.DummyContent;
+import com.shouxin.shouxin.Adapter.DictionartAdapter;
 import com.shouxin.shouxin.Adapter.RecyclerAdapter;
 import com.shouxin.shouxin.Adapter.RvDividerItemDecoration;
 import com.shouxin.shouxin.Adapter.SecondaryListAdapter;
@@ -43,9 +46,11 @@ public class DictionaryFragment extends Fragment {
 
     private static volatile DictionaryFragment fragment;
     private FragmentDictionaryBinding binding;
-    private List<SecondaryListAdapter.DataTree<String, Word>> datas;
+//    private List<SecondaryListAdapter.DataTree<String, Word>> datas;
+    private ArrayMap datas;
     private List<Word> words;
-    private RecyclerAdapter mAdapter;
+//    private RecyclerAdapter mAdapter;
+    private DictionartAdapter mAdapter;
     private WordRepository mRepository;
     private MyHandler mHandler;
 
@@ -66,15 +71,16 @@ public class DictionaryFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentDictionaryBinding.inflate(inflater, container, false);
         mHandler = new MyHandler(getActivity());
-        datas = new ArrayList<>();
+        datas = new ArrayMap<String, Integer>();
         getAllWords();
         RecyclerView rv = binding.recycler;
 
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setHasFixedSize(true);
-        rv.addItemDecoration(new RvDividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+//        rv.addItemDecoration(new RvDividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+//        mAdapter = new RecyclerAdapter(getActivity());
 
-        mAdapter = new RecyclerAdapter(getActivity());
+        mAdapter = new DictionartAdapter(getContext(), new ArrayMap<>());
         mAdapter.setData(datas);
         rv.setAdapter(mAdapter);
 
@@ -107,7 +113,7 @@ public class DictionaryFragment extends Fragment {
                     int code = object.getInt("code");
                     if (code == 200) {
                         Array2Words(object.getJSONArray("datas"));
-                        mAdapter.notifyNewData(datas);
+//                        mAdapter.notifyNewData(datas);
                     }
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
@@ -116,7 +122,8 @@ public class DictionaryFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                datas.put("字母", DummyContent.getWords());
+                mAdapter.setData(datas);
             }
         });
     }
@@ -130,7 +137,7 @@ public class DictionaryFragment extends Fragment {
             JSONObject object = array.getJSONObject(i);
             String category = object.getString("category");
             if (!curCategory.equals(category)) {
-                datas.add(new SecondaryListAdapter.DataTree<String, Word>(curCategory, words));
+                datas.put(category, words);
                 words = new ArrayList<>();
                 curCategory = category;
             }
@@ -141,7 +148,7 @@ public class DictionaryFragment extends Fragment {
             words.add(word);
             mRepository.insert(word);
         }
-        datas.add(new SecondaryListAdapter.DataTree<String, Word>(curCategory, words));
+        datas.put(curCategory, words);
 
     }
 
@@ -151,14 +158,14 @@ public class DictionaryFragment extends Fragment {
         List<Word> subWords = new ArrayList<>();
         for (Word word:words) {
             if (!word.getCategory().equals(curCategory)) {
-                datas.add(new SecondaryListAdapter.DataTree<>(curCategory, subWords));
+                datas.put(curCategory, subWords);
                 subWords = new ArrayList<>();
                 curCategory = word.getCategory();
             }
             subWords.add(word);
         }
-        datas.add(new SecondaryListAdapter.DataTree<>(curCategory, subWords));
-        mAdapter.notifyNewData(datas);
+        datas.put(curCategory, subWords);
+        mAdapter.setData(datas);
     }
 
     private class MyHandler extends Handler {

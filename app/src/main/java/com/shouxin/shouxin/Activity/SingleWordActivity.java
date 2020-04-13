@@ -27,24 +27,9 @@ public class SingleWordActivity extends AppCompatActivity {
 
     private ActivitySignleWordBinding binding;
 
-    ImageView imageView;
-    TextView wordTitle;
-    TextView wordDescription;
-    Drawable drawable;
-    String wordDescriptionCont;
-
     static{
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
-
-//    Handler handler = new Handler(){
-//
-//        @Override
-//        public void handleMessage(Message msg){
-//            imageView.setBackground(drawable);
-//            wordDescription.setText(wordDescriptionCont);
-//        }
-//    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -67,21 +52,6 @@ public class SingleWordActivity extends AppCompatActivity {
         Glide.with(this)
                 .load(word.pictureUrl)
                 .into(binding.wordImage);
-//        wordTitle.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        try {
-//                            getNetworkData("A");
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }).start();
-//            }
-//        });
 
     }
 

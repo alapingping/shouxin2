@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
-import yalantis.com.sidemenu.interfaces.ScreenShotable;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
@@ -45,7 +44,7 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
  * A simple {@link Fragment} subclass.
  */
 public class CommunityFragment extends Fragment implements
-        AbsListView.OnScrollListener, AbsListView.OnItemClickListener, ScreenShotable {
+        AbsListView.OnScrollListener, AbsListView.OnItemClickListener {
 
     private FragmentCommunityBinding communityBinding;
 
@@ -160,16 +159,6 @@ public class CommunityFragment extends Fragment implements
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         Toast.makeText(getActivity(), "Item Clicked: " + position, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void takeScreenShot() {
-
-    }
-
-    @Override
-    public Bitmap getBitmap() {
-        return null;
     }
 
     public static CommunityFragment getInstance(){

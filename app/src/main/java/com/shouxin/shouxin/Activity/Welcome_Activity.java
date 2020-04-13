@@ -39,11 +39,11 @@ public class Welcome_Activity extends AppCompatActivity {
         PermissionManager.verifyAccessNetPermissions(Welcome_Activity.this);
         requestMultiplePermissions();
 
-
     }
 
     public void onClickStart(View view) {
-        Intent intent = new Intent(this, Login_Activity.class);
+//        Intent intent = new Intent(this, Login_Activity.class);
+        Intent intent = new Intent(this, BottomNavigationActivity.class);
         startActivity(intent);
     }
 

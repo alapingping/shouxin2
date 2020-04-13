@@ -87,7 +87,7 @@ public class BottomNavigationActivity extends AppCompatActivity {
                 Util.showMessage(this, "当前正在使用移动网络");
             }
         } else {
-            Util.showMessage(this, "当前网络不可用，请检查网络状态");
+            Util.showMessage(getApplicationContext(), "当前网络不可用，请检查网络状态");
         }
 
         getSupportFragmentManager().beginTransaction()

@@ -43,6 +43,8 @@ dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation rootProject.ext.dependencies.appcompat
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
     annotationProcessor rootProject.ext.dependencies.annotation
     implementation rootProject.ext.dependencies.constraintlayout
     implementation rootProject.ext.dependencies.legacy
@@ -68,12 +70,12 @@ dependencies {
     implementation rootProject.ext.dependencies.library
     implementation rootProject.ext.dependencies.phoenix
     implementation rootProject.ext.dependencies.circleimageview
-    
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-    implementation 'com.github.yalantis:Side-Menu.Android:1.0.1'
+//    implementation 'com.github.yalantis:Side-Menu.Android:1.0.1'
 
     implementation files("libs/jsoup-1.11.3.jar")
 
