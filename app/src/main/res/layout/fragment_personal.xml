@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".fragment.PersonalFragment">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,9 +17,9 @@
             android:id="@+id/constraintlayout">
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/_person_background"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="250dp"
                 android:src="@drawable/sky"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -28,15 +27,15 @@
                 android:scaleType="fitXY"/>
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/circleImageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/_person_head_shot"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_marginBottom="32dp"
                 android:src="@mipmap/ic_launcher"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/imageView"
-                app:layout_constraintTop_toTopOf="@+id/imageView" />
+                app:layout_constraintStart_toStartOf="@+id/_person_background"
+                app:layout_constraintTop_toTopOf="@+id/_person_background" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -47,7 +46,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/circleImageView">
+                app:layout_constraintTop_toBottomOf="@+id/_person_head_shot">
             </TextView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

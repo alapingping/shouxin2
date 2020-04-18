@@ -65,6 +65,7 @@ dependencies {
     implementation rootProject.ext.dependencies.adapterRxjava
 
     implementation rootProject.ext.dependencies.glide
+    implementation rootProject.ext.dependencies.glideTransformations
 //    implementation rootProject.ext.dependencies.CircularReveal
 
     implementation rootProject.ext.dependencies.library

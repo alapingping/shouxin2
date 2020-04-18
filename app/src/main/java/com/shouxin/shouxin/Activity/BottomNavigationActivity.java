@@ -36,8 +36,12 @@ public class BottomNavigationActivity extends AppCompatActivity implements
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = item -> {
+                Fragment fragment = this.getSupportFragmentManager().findFragmentById(R.id.container_frame);
                 FragmentManager fm = getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
+                if (fragment instanceof WordFragment) {
+                    ft.remove(fragment);
+                }
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
                         ft.hide(DictionaryFragment.getInstance())

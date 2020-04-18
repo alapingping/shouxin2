@@ -1,31 +1,39 @@
 package com.shouxin.shouxin.Adapter;
 
+import android.content.Context;
+import android.util.ArrayMap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.shouxin.shouxin.R;
 
 import java.util.ArrayList;
 
 public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.VH> {
 
-    private ArrayList<String> mdata;
+    private ArrayMap<String, Integer> mdata;
+    private Context context;
 
-    public MenuAdapter(ArrayList<String> list) {
+    public MenuAdapter(Context context, ArrayMap<String, Integer> list) {
         this.mdata = list;
+        this.context = context;
     }
 
 
-    public static class VH extends RecyclerView.ViewHolder {
-        public final TextView textView;
-        public VH(@NonNull View itemView) {
+     static class VH extends RecyclerView.ViewHolder {
+         final TextView item_name;
+         final ImageView item_icon;
+         VH(@NonNull View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.item);
+             item_name = itemView.findViewById(R.id.item_name);
+             item_icon = itemView.findViewById(R.id.item_icon);
         }
     }
 
@@ -38,7 +46,9 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.VH> {
 
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
-        holder.textView.setText(mdata.get(position));
+        String key = mdata.keyAt(position);
+        holder.item_name.setText(key);
+        holder.item_icon.setImageDrawable(context.getDrawable(mdata.get(key)));
     }
 
 
