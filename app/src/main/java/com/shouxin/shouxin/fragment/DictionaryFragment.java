@@ -79,8 +79,7 @@ public class DictionaryFragment extends Fragment {
         rv.setHasFixedSize(true);
 //        rv.addItemDecoration(new RvDividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
 //        mAdapter = new RecyclerAdapter(getActivity());
-
-        mAdapter = new DictionartAdapter(getContext(), new ArrayMap<>());
+        mAdapter = new DictionartAdapter(getActivity(), new ArrayMap<>());
         mAdapter.setData(datas);
         rv.setAdapter(mAdapter);
 
@@ -154,6 +153,12 @@ public class DictionaryFragment extends Fragment {
 
     private void getWordsFromLocal() {
 
+        if (words.size() == 0) {
+            datas.put("字母", DummyContent.getWords());
+            mAdapter.setData(datas);
+            return;
+        }
+
         String curCategory = words.get(0).getCategory();
         List<Word> subWords = new ArrayList<>();
         for (Word word:words) {
@@ -182,7 +187,8 @@ public class DictionaryFragment extends Fragment {
             switch (msg.what) {
                 case 0:
                     // 需要从数据库提取数据
-                    getWordsFromServer();
+//                    getWordsFromServer();
+                    getWordsFromLocal();
                     break;
                 case 1:
                     // 从本地数据库提取数据

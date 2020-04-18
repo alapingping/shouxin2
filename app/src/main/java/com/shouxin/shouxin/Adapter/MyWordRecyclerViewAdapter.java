@@ -1,7 +1,8 @@
-package com.shouxin.shouxin.Activity;
+package com.shouxin.shouxin.Adapter;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.shouxin.shouxin.Activity.WordFragment.OnListFragmentInteractionListener;
+import com.shouxin.shouxin.fragment.WordFragment.OnListFragmentInteractionListener;
 import com.shouxin.shouxin.DataModel.Word;
 import com.shouxin.shouxin.R;
 
@@ -18,16 +19,17 @@ import java.util.List;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Word} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
  */
 public class MyWordRecyclerViewAdapter extends RecyclerView.Adapter<MyWordRecyclerViewAdapter.ViewHolder> {
 
+    private final Context context;
     private final List<Word> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyWordRecyclerViewAdapter(List<Word> items, OnListFragmentInteractionListener listener) {
+    public MyWordRecyclerViewAdapter(Context context, List<Word> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
+        this.context = context;
     }
 
     @Override
@@ -42,7 +44,10 @@ public class MyWordRecyclerViewAdapter extends RecyclerView.Adapter<MyWordRecycl
         holder.mItem = mValues.get(position);
         holder.mWordNameView.setText(mValues.get(position).getName());
         holder.mWordDescriptionView.setText(mValues.get(position).getDescription());
-
+        Glide.with(context)
+                .load(mValues.get(position).getPictureUrl())
+                .thumbnail(0.1f)
+                .into(holder.mWordImageView);
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -1,4 +1,4 @@
-package com.shouxin.shouxin.Activity;
+package com.shouxin.shouxin.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -8,15 +8,15 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.shouxin.shouxin.Adapter.MyWordRecyclerViewAdapter;
 import com.shouxin.shouxin.DataModel.Word;
 import com.shouxin.shouxin.R;
 import com.shouxin.shouxin.Activity.dummy.DummyContent;
-
-import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -26,9 +26,7 @@ import java.util.List;
  */
 public class WordFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
 
@@ -39,8 +37,6 @@ public class WordFragment extends Fragment {
     public WordFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static WordFragment newInstance(int columnCount) {
         WordFragment fragment = new WordFragment();
         Bundle args = new Bundle();
@@ -72,7 +68,7 @@ public class WordFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyWordRecyclerViewAdapter(DummyContent.getWords(), mListener));
+            recyclerView.setAdapter(new MyWordRecyclerViewAdapter(getContext(), DummyContent.getWords(), mListener));
         }
         return view;
     }
@@ -106,7 +102,7 @@ public class WordFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onListFragmentInteraction(Word item);
     }
+
 }

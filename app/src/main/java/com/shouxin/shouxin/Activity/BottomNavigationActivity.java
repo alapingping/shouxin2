@@ -1,5 +1,6 @@
 package com.shouxin.shouxin.Activity;
 
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,11 +12,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.LabelVisibilityMode;
+import com.shouxin.shouxin.DataModel.Word;
 import com.shouxin.shouxin.R;
 import com.shouxin.shouxin.Utils.Util;
 import com.shouxin.shouxin.databinding.ActivityBottomNavigationBinding;
@@ -24,8 +27,10 @@ import com.shouxin.shouxin.fragment.DictionaryFragment;
 import com.shouxin.shouxin.fragment.ModeChoiceFragment;
 import com.shouxin.shouxin.fragment.PersonalFragment;
 import com.shouxin.shouxin.fragment.SearchFragment;
+import com.shouxin.shouxin.fragment.WordFragment;
 
-public class BottomNavigationActivity extends AppCompatActivity {
+public class BottomNavigationActivity extends AppCompatActivity implements
+        WordFragment.OnListFragmentInteractionListener {
 
     private ActivityBottomNavigationBinding navigationBinding;
 
@@ -101,4 +106,33 @@ public class BottomNavigationActivity extends AppCompatActivity {
                 .show(CommunityFragment.getInstance())
                 .commit();
         }
+
+    @Override
+    public void onListFragmentInteraction(Word item) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("word", item);
+
+        Intent intent = new Intent(this, SingleWordActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Fragment fragment = this.getSupportFragmentManager().findFragmentById(R.id.container_frame);
+        if(fragment instanceof WordFragment){
+            FragmentManager fm = getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.remove(fragment);
+                    ft.hide(CommunityFragment.getInstance())
+                    .hide(ModeChoiceFragment.getInstance())
+                    .hide(PersonalFragment.getInstance())
+                    .show(DictionaryFragment.getInstance())
+                    .commit();
+        } else {
+            finish();
+        }
+        return true;
+    }
+
 }

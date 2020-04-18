@@ -6,8 +6,9 @@
     android:name="com.shouxin.shouxin.Activity.WordFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="30dp"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context=".Activity.WordFragment"
+    tools:context=".fragment.WordFragment"
     tools:listitem="@layout/fragment_word" />

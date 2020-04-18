@@ -45,6 +45,7 @@ public class Welcome_Activity extends AppCompatActivity {
 //        Intent intent = new Intent(this, Login_Activity.class);
         Intent intent = new Intent(this, BottomNavigationActivity.class);
         startActivity(intent);
+        finish();
     }
 
     public void getPermission(){
