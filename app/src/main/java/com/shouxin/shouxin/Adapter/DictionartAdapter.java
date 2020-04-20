@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.shouxin.shouxin.Activity.BottomNavigationActivity;
+import com.shouxin.shouxin.Activity.dummy.DummyContent;
 import com.shouxin.shouxin.DataModel.Word;
 import com.shouxin.shouxin.R;
 import com.shouxin.shouxin.fragment.CommunityFragment;
@@ -57,7 +58,8 @@ public class DictionartAdapter extends RecyclerView.Adapter<DictionartAdapter.Ca
                     .hide(ModeChoiceFragment.getInstance())
                     .hide(PersonalFragment.getInstance())
                     .hide(DictionaryFragment.getInstance())
-                    .add(R.id.container_frame, WordFragment.newInstance(1))
+                    .add(R.id.container_frame, WordFragment.newInstance(categories.valueAt(position)))
+                    .addToBackStack("dictionary")
                     .show(WordFragment.newInstance(1));
             ft.commit();
         });

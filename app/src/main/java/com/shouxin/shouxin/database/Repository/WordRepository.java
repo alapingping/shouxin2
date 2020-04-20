@@ -14,20 +14,22 @@ import java.util.List;
 public class WordRepository {
 
     private WordDao mWordDao;
-    private List<Word> mAllWords;
 
     public WordRepository(Application application){
         WordRoomDatabase database = WordRoomDatabase.getDatabase(application);
         mWordDao = database.wordDao();
-        mAllWords = mWordDao.getAllWords();
     }
 
     public List<Word> getAllWords(){
-        return mAllWords;
+        return mWordDao.getAllWords();
     }
 
     public void insert(Word word){
         new insertAsyncTask(mWordDao).execute(word);
+    }
+
+    public void updateWordCollectedStatus(Word word) {
+        new updateAsyncTask(mWordDao).execute(word);
     }
 
     private static class insertAsyncTask extends AsyncTask<Word, Void, Void> {
@@ -41,6 +43,21 @@ public class WordRepository {
         @Override
         protected Void doInBackground(Word... words) {
             mAsyncTaskDao.insert(words[0]);
+            return null;
+        }
+    }
+
+    private static class updateAsyncTask extends AsyncTask<Word, Void, Void> {
+
+        private WordDao mAsyncTaskDao;
+
+        updateAsyncTask(WordDao wordDao){
+            this.mAsyncTaskDao = wordDao;
+        }
+
+        @Override
+        protected Void doInBackground(Word... words) {
+            mAsyncTaskDao.updateWordCollectedStatus(words[0]);
             return null;
         }
     }

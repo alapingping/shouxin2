@@ -18,6 +18,8 @@ import com.shouxin.shouxin.DataModel.Word;
 import com.shouxin.shouxin.R;
 import com.shouxin.shouxin.Activity.dummy.DummyContent;
 
+import java.util.List;
+
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -26,15 +28,29 @@ import com.shouxin.shouxin.Activity.dummy.DummyContent;
  */
 public class WordFragment extends Fragment {
 
+    private static final int DEFAULT_COLUMN_COUNT = 1;
+
     private static final String ARG_COLUMN_COUNT = "column-count";
+
     private int mColumnCount = 1;
+
     private OnListFragmentInteractionListener mListener;
 
+    private static List<Word> words;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public WordFragment() {
+    }
+
+    public static WordFragment newInstance(List<Word> words) {
+        WordFragment fragment = new WordFragment();
+        WordFragment.words = words;
+        Bundle args = new Bundle();
+        args.putInt(ARG_COLUMN_COUNT, DEFAULT_COLUMN_COUNT);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     public static WordFragment newInstance(int columnCount) {
@@ -68,7 +84,7 @@ public class WordFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyWordRecyclerViewAdapter(getContext(), DummyContent.getWords(), mListener));
+            recyclerView.setAdapter(new MyWordRecyclerViewAdapter(getContext(), words, mListener));
         }
         return view;
     }

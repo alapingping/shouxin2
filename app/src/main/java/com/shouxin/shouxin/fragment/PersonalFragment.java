@@ -82,7 +82,7 @@ public class PersonalFragment extends Fragment {
                 .into(binding.PersonHeadShot);
         binding.username.setText(SPHelper.getUsername(getContext()));
         recyclerView = binding.menu;
-        recyclerView.setAdapter(new MenuAdapter(getContext(), this.mdata));
+        recyclerView.setAdapter(new MenuAdapter(getActivity(), this.mdata));
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new RvDividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         return binding.getRoot();

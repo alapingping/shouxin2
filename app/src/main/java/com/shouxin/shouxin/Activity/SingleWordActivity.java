@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.shouxin.shouxin.DataModel.Word;
 import com.shouxin.shouxin.R;
 import com.shouxin.shouxin.Utils.Util;
+import com.shouxin.shouxin.database.Repository.WordRepository;
 import com.shouxin.shouxin.databinding.ActivitySignleWordBinding;
 
 import org.jsoup.Jsoup;
@@ -31,9 +32,14 @@ import java.util.List;
 
 public class SingleWordActivity extends AppCompatActivity {
 
+    // 当前word
+    private Word word;
+    // 当前activity的binding
     private ActivitySignleWordBinding binding;
     // 是否已收藏
     private boolean collected;
+    // 收藏状态是否更改
+    private boolean collectedChangeFlag;
 
     static{
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -46,11 +52,12 @@ public class SingleWordActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         Bundle bundle = getIntent().getExtras();
-        Word word = (Word) bundle.getSerializable("word");
+        word = (Word) bundle.getSerializable("word");
 
         binding.wordTitle.setText(word.getName());
         binding.wordDescription.setText(word.getDescription());
-
+        // 使得toolbar支持监听
+        setSupportActionBar(binding.toolbar);
         binding.toolbar.setTitle(R.string.toolbar_menu_back);
         binding.toolbar.inflateMenu(R.menu.menu_toolbar);
         binding.toolbar.setNavigationIcon(R.drawable.ic_chevron_left_white_24dp);
@@ -58,8 +65,20 @@ public class SingleWordActivity extends AppCompatActivity {
         binding.toolbar.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.toolbar_favorite:
-                    Util.showMessage(getApplicationContext(),"已添加到我的收藏");
-                    item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_24dp));
+                    if (word.getCollected() == 0){
+                        // 未收藏
+                        Util.showMessage(this,"已添加到我的收藏");
+                        item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_24dp));
+                        word.setCollected(1);
+                        collectedChangeFlag = !collectedChangeFlag;
+                    } else {
+                        // 已收藏
+                        Util.showMessage(this,"已从我的收藏中移除");
+                        item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_border_white_24dp));
+                        word.setCollected(0);
+                        collectedChangeFlag = !collectedChangeFlag;
+                    }
+
                     break;
                 case R.id.toolbar_share:
                     break;
@@ -68,7 +87,6 @@ public class SingleWordActivity extends AppCompatActivity {
             }
             return false;
         });
-        setSupportActionBar(binding.toolbar);
 
         Glide.with(this)
                 .load(word.pictureUrl)
@@ -109,4 +127,21 @@ public class SingleWordActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (word.getCollected() == 1) {
+            menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_favorite_24dp));
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onDestroy() {
+        new Thread(() -> {
+            if (collectedChangeFlag) {
+                new WordRepository(getApplication()).updateWordCollectedStatus(word);
+            }
+        }).start();
+        super.onDestroy();
+    }
 }

@@ -24,6 +24,9 @@ public class Word implements Serializable {
     @NonNull
     @ColumnInfo(name = "pictureUrl")
     public String pictureUrl;
+    @NonNull
+    @ColumnInfo(name = "collected")
+    public int collected;
 
     public Word(){}
 
@@ -40,6 +43,15 @@ public class Word implements Serializable {
         this.name = name;
         this.description = description;
         this.pictureUrl = pictureUrl;
+    }
+
+    @Ignore
+    public Word(String category, String name, String description, String pictureUrl, int collected){
+        this.category = category;
+        this.name = name;
+        this.description = description;
+        this.pictureUrl = pictureUrl;
+        this.collected = collected;
     }
 
 
@@ -73,5 +85,13 @@ public class Word implements Serializable {
 
     public void setPictureUrl(String pictureUrl) {
         this.pictureUrl = pictureUrl;
+    }
+
+    public int getCollected() {
+        return collected;
+    }
+
+    public void setCollected(int collected) {
+        this.collected = collected;
     }
 }

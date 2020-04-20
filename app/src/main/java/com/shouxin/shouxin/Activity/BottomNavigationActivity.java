@@ -29,56 +29,49 @@ import com.shouxin.shouxin.fragment.PersonalFragment;
 import com.shouxin.shouxin.fragment.SearchFragment;
 import com.shouxin.shouxin.fragment.WordFragment;
 
+import java.util.ArrayList;
+
 public class BottomNavigationActivity extends AppCompatActivity implements
         WordFragment.OnListFragmentInteractionListener {
 
+    // 所有的fragment
+    private ArrayList<Fragment> fragments;
+    // viewbinding
     private ActivityBottomNavigationBinding navigationBinding;
-
+    // 监听器
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = item -> {
-                Fragment fragment = this.getSupportFragmentManager().findFragmentById(R.id.container_frame);
-                FragmentManager fm = getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                if (fragment instanceof WordFragment) {
-                    ft.remove(fragment);
-                }
-                switch (item.getItemId()) {
-                    case R.id.navigation_home:
-                        ft.hide(DictionaryFragment.getInstance())
-                                .hide(ModeChoiceFragment.getInstance())
-                                .hide(PersonalFragment.getInstance())
-                                .show(CommunityFragment.getInstance());
-                        break;
-                    case R.id.navigation_study:
-                        ft.hide(CommunityFragment.getInstance())
-                                .hide(ModeChoiceFragment.getInstance())
-                                .hide(PersonalFragment.getInstance())
-                                .show(DictionaryFragment.getInstance());
-                        break;
-                    case R.id.navigation_recognition:
-                        ft.hide(CommunityFragment.getInstance())
-                                .hide(DictionaryFragment.getInstance())
-                                .hide(PersonalFragment.getInstance())
-                                .show(ModeChoiceFragment.getInstance());
-                        break;
-                    case R.id.navigation_personal:
-                        ft.hide(CommunityFragment.getInstance())
-                                .hide(DictionaryFragment.getInstance())
-                                .hide(ModeChoiceFragment.getInstance())
-                                .show(PersonalFragment.getInstance());
-                        break;
-                    default:
-                        break;
-                }
-                ft.commit();
-                return true;
-            };
+        Fragment fragment = this.getSupportFragmentManager().findFragmentById(R.id.container_frame);
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        if (fragment instanceof WordFragment) {
+            ft.remove(fragment);
+        }
+        switch (item.getItemId()) {
+            case R.id.navigation_home:
+                showFragment(ft, 0);
+                break;
+            case R.id.navigation_study:
+                showFragment(ft, 1);
+                break;
+            case R.id.navigation_recognition:
+                showFragment(ft, 2);
+                break;
+            case R.id.navigation_personal:
+                showFragment(ft, 3);
+                break;
+            default:
+                break;
+        }
+        return true;
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         navigationBinding = ActivityBottomNavigationBinding.inflate(LayoutInflater.from(this));
         setContentView(navigationBinding.getRoot());
+        initFragments();
         navigationBinding.navigation.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_LABELED);
         navigationBinding.navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -109,7 +102,7 @@ public class BottomNavigationActivity extends AppCompatActivity implements
                 .hide(PersonalFragment.getInstance())
                 .show(CommunityFragment.getInstance())
                 .commit();
-        }
+    }
 
     @Override
     public void onListFragmentInteraction(Word item) {
@@ -127,16 +120,36 @@ public class BottomNavigationActivity extends AppCompatActivity implements
         if(fragment instanceof WordFragment){
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
+            String lastFragment = fm.getBackStackEntryAt(0).getName();
+            fm.popBackStack();
             ft.remove(fragment);
-                    ft.hide(CommunityFragment.getInstance())
-                    .hide(ModeChoiceFragment.getInstance())
-                    .hide(PersonalFragment.getInstance())
-                    .show(DictionaryFragment.getInstance())
-                    .commit();
+            if (lastFragment.equals("favorite")) {
+                showFragment(ft, 3);
+            } else if (lastFragment.equals("dictionary")) {
+                showFragment(ft, 1);
+            }
         } else {
             finish();
         }
         return true;
     }
 
+    private void initFragments() {
+        fragments = new ArrayList<>();
+        fragments.add(CommunityFragment.getInstance());
+        fragments.add(DictionaryFragment.getInstance());
+        fragments.add(ModeChoiceFragment.getInstance());
+        fragments.add(PersonalFragment.getInstance());
+    }
+
+    private void showFragment(FragmentTransaction ft, int index) {
+        for (int i = 0; i < fragments.size(); i++) {
+            if (i == index) {
+                ft.show(fragments.get(i));
+            } else {
+                ft.hide(fragments.get(i));
+            }
+        }
+        ft.commit();
+    }
 }

@@ -2,6 +2,7 @@ package com.shouxin.shouxin.fragment;
 
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -44,10 +45,9 @@ public class DictionaryFragment extends Fragment {
     private static volatile DictionaryFragment fragment;
     private FragmentDictionaryBinding binding;
     private ArrayMap datas;
-    private List<Word> words;
+    private static List<Word> words;
     private DictionartAdapter mAdapter;
     private WordRepository mRepository;
-    private MyHandler mHandler;
 
     public static DictionaryFragment getInstance(){
         if (fragment == null) {
@@ -65,15 +65,12 @@ public class DictionaryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentDictionaryBinding.inflate(inflater, container, false);
-        mHandler = new MyHandler(getActivity());
         datas = new ArrayMap<String, Integer>();
         getAllWords();
         RecyclerView rv = binding.recycler;
 
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setHasFixedSize(true);
-//        rv.addItemDecoration(new RvDividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
-//        mAdapter = new RecyclerAdapter(getActivity());
         mAdapter = new DictionartAdapter(getActivity(), new ArrayMap<>());
         mAdapter.setData(datas);
         rv.setAdapter(mAdapter);
@@ -82,17 +79,7 @@ public class DictionaryFragment extends Fragment {
     }
 
     private void getAllWords() {
-        new Thread(() -> {
-            mRepository = new WordRepository(getActivity().getApplication());
-            words = mRepository.getAllWords();
-            Message message = Message.obtain();
-            if (words.size() == 0) {
-                message.what = 0;
-            } else {
-                message.what = 1;
-            }
-            mHandler.handleMessage(message);
-        }).start();
+        new queryAsynTask().execute();
     }
 
     private void getWordsFromServer() {
@@ -194,7 +181,32 @@ public class DictionaryFragment extends Fragment {
             }
 
         }
+    }
 
+    private class queryAsynTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void ...voids) {
+            mRepository = new WordRepository(getActivity().getApplication());
+            words = mRepository.getAllWords();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            if (words.size() == 0) {
+//                getWordsFromLocal();
+//                getWordsFromServer();
+            } else {
+                datas.put("字母", DummyContent.getWords());
+                mAdapter.setData(datas);
+//                getWordsFromLocal();
+            }
+        }
+    }
+
+    public static List<Word> getWords() {
+        return words;
     }
 
 }
