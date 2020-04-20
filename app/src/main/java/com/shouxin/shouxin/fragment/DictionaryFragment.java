@@ -18,9 +18,6 @@ import com.shouxin.shouxin.API.Client;
 import com.shouxin.shouxin.API.Service;
 import com.shouxin.shouxin.Activity.dummy.DummyContent;
 import com.shouxin.shouxin.Adapter.DictionartAdapter;
-import com.shouxin.shouxin.Adapter.RecyclerAdapter;
-import com.shouxin.shouxin.Adapter.RvDividerItemDecoration;
-import com.shouxin.shouxin.Adapter.SecondaryListAdapter;
 import com.shouxin.shouxin.DataModel.Word;
 import com.shouxin.shouxin.database.Repository.WordRepository;
 import com.shouxin.shouxin.databinding.FragmentDictionaryBinding;
@@ -46,10 +43,8 @@ public class DictionaryFragment extends Fragment {
 
     private static volatile DictionaryFragment fragment;
     private FragmentDictionaryBinding binding;
-//    private List<SecondaryListAdapter.DataTree<String, Word>> datas;
     private ArrayMap datas;
     private List<Word> words;
-//    private RecyclerAdapter mAdapter;
     private DictionartAdapter mAdapter;
     private WordRepository mRepository;
     private MyHandler mHandler;

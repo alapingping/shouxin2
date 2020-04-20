@@ -82,12 +82,12 @@ public class BottomNavigationActivity extends AppCompatActivity implements
         navigationBinding.navigation.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_LABELED);
         navigationBinding.navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        // 设置状态栏透明度
-        if (Build.VERSION.SDK_INT >= 21) {
-            getWindow().setFlags(
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
+//        // 设置状态栏透明度
+//        if (Build.VERSION.SDK_INT >= 21) {
+//            getWindow().setFlags(
+//                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+//                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        }
 
         // 判断网络状态
         if (Util.NetworkUtil.isNetworkConnected(this)) {

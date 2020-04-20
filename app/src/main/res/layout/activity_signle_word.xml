@@ -3,13 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Activity.SingleWordActivity"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/colorBlueJeans"
+        app:titleTextColor="@color/colorWhite"
+        app:navigationIcon="@drawable/ic_chevron_left_white_24dp"
+        >
     </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout

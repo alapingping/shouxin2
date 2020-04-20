@@ -3,6 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".Activity.SingleWordActivity">
 
+    <item android:id="@+id/toolbar_favorite"
+        android:title="@string/toolbar_menu_favorite"
+        android:icon="@drawable/ic_favorite_border_white_24dp"
+        android:showAsAction="always"
+        app:showAsAction="ifRoom"
+        tools:ignore="AppCompatResource"
+        />
 
+    <item android:id="@+id/toolbar_share"
+        android:title="@string/toolbar_menu_share"
+        android:icon="@drawable/ic_toolbar_share_white_24dp"
+        android:showAsAction="always"
+        app:showAsAction="ifRoom"
+        tools:ignore="AppCompatResource"
+        />
 
 </menu>

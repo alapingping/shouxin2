@@ -8,8 +8,14 @@
     android:orientation="vertical"
     tools:context=".Activity.BottomNavigationActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorBlueJeans"
+        app:titleTextColor="@color/colorWhite"
+        app:title="@string/app_name"/>
+
     <FrameLayout
-        android:layout_marginTop="30dp"
         android:id="@+id/container_frame"
         android:layout_width="match_parent"
         android:layout_height="0dp"

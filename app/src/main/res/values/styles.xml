@@ -3,13 +3,22 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorMintDark</item>
-        <item name="colorPrimaryDark">@color/colorMintDark</item>
+        <item name="colorPrimary">@color/colorBlueJeans</item>
+        <item name="colorPrimaryDark">@color/colorBlueJeans</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="MaterialTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="AppTheme.Toolbar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorBlueJeans</item>
+        <item name="colorPrimaryDark">@color/colorBlueJeans</item>
+        <item name="actionMenuTextColor">@color/colorWhite</item>
+        <item name="contentInsetStart">0dp</item>
+        <item name="paddingEnd">10dp</item>
+        <item name="contentInsetStartWithNavigation">0dp</item>
     </style>
 
 </resources>

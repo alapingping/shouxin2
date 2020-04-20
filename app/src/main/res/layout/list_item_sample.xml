@@ -27,7 +27,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="top|right"
-                android:background="@drawable/ic_favorite_border_black_24dp"
+                android:background="@drawable/ic_favorite_border_white_24dp"
                 android:tag="unlike"
                 />
 

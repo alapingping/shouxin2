@@ -14,7 +14,9 @@
         android:minHeight="?attr/actionBarSize"
         app:layout_constraintTop_toTopOf="parent"
         app:title="发表动态"
-        app:navigationIcon="@drawable/ic_chevron_left_black_24dp">
+        app:titleTextColor="@color/colorWhite"
+        app:navigationIcon="@drawable/ic_chevron_left_white_24dp"
+        style="@style/Base.Widget.AppCompat.Toolbar">
     </androidx.appcompat.widget.Toolbar>
 
     <EditText
