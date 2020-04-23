@@ -1,6 +1,5 @@
 package com.shouxin.shouxin.Adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.ArrayMap;
 import android.view.LayoutInflater;
@@ -9,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.shouxin.shouxin.Activity.BottomNavigationActivity;
-import com.shouxin.shouxin.Activity.dummy.DummyContent;
 import com.shouxin.shouxin.DataModel.Word;
 import com.shouxin.shouxin.R;
 import com.shouxin.shouxin.fragment.CommunityFragment;

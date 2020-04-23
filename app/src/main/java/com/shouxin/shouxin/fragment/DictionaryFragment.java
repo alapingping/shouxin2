@@ -1,8 +1,8 @@
 package com.shouxin.shouxin.fragment;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,13 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Handler;
 import android.os.Message;
 import android.util.ArrayMap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.shouxin.shouxin.API.Client;
 import com.shouxin.shouxin.API.Service;
-import com.shouxin.shouxin.Activity.dummy.DummyContent;
+import com.shouxin.shouxin.dummy.DummyContent;
 import com.shouxin.shouxin.Adapter.DictionartAdapter;
 import com.shouxin.shouxin.DataModel.Word;
 import com.shouxin.shouxin.database.Repository.WordRepository;
@@ -32,6 +33,13 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.Maybe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -47,7 +55,6 @@ public class DictionaryFragment extends Fragment {
     private ArrayMap datas;
     private static List<Word> words;
     private DictionartAdapter mAdapter;
-    private WordRepository mRepository;
 
     public static DictionaryFragment getInstance(){
         if (fragment == null) {
@@ -66,6 +73,7 @@ public class DictionaryFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentDictionaryBinding.inflate(inflater, container, false);
         datas = new ArrayMap<String, Integer>();
+
         getAllWords();
         RecyclerView rv = binding.recycler;
 
@@ -78,8 +86,25 @@ public class DictionaryFragment extends Fragment {
         return binding.getRoot();
     }
 
+    @SuppressLint("CheckResult")
     private void getAllWords() {
-        new queryAsynTask().execute();
+        WordRepository.getWordRepository().getAllWords()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        new Consumer<List<Word>>() {
+                            @Override
+                            public void accept(List<Word> words) throws Exception {
+                                if (words.size() == 0) {
+                                    getWordsFromServer();
+                                } else {
+                                    datas.put("字母", DummyContent.getWords());
+                                    mAdapter.setData(datas);
+//                                  getWordsFromLocal();
+                                }
+                            }
+                        }
+                );
     }
 
     private void getWordsFromServer() {
@@ -127,10 +152,9 @@ public class DictionaryFragment extends Fragment {
                     object.getString("description"),
                     object.getString("pictureURL"));
             words.add(word);
-            mRepository.insert(word);
+            WordRepository.getWordRepository().insert(word);
         }
         datas.put(curCategory, words);
-
     }
 
     private void getWordsFromLocal() {
@@ -183,30 +207,15 @@ public class DictionaryFragment extends Fragment {
         }
     }
 
-    private class queryAsynTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void ...voids) {
-            mRepository = new WordRepository(getActivity().getApplication());
-            words = mRepository.getAllWords();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void v) {
-            if (words.size() == 0) {
-//                getWordsFromLocal();
-//                getWordsFromServer();
-            } else {
-                datas.put("字母", DummyContent.getWords());
-                mAdapter.setData(datas);
-//                getWordsFromLocal();
-            }
-        }
-    }
 
     public static List<Word> getWords() {
         return words;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        words = null;
     }
 
 }

@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import io.reactivex.Scheduler;
+import io.reactivex.schedulers.Schedulers;
 
 import android.util.Log;
 import android.view.KeyEvent;
@@ -50,7 +52,6 @@ public class SingleWordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivitySignleWordBinding.inflate(LayoutInflater.from(this));
         setContentView(binding.getRoot());
-
         Bundle bundle = getIntent().getExtras();
         word = (Word) bundle.getSerializable("word");
 
@@ -137,11 +138,10 @@ public class SingleWordActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        new Thread(() -> {
-            if (collectedChangeFlag) {
-                new WordRepository(getApplication()).updateWordCollectedStatus(word);
-            }
-        }).start();
+        if (collectedChangeFlag) {
+            WordRepository.getWordRepository().update(word)
+                    .subscribeOn(Schedulers.io());
+        }
         super.onDestroy();
     }
 }

@@ -8,7 +8,6 @@ ext {
             versionName         :"1.0"
     ]
 
-
     versions = [
             appcompat               : "1.1.0",
             annotation              : "1.1.0",
@@ -21,8 +20,8 @@ ext {
             tensorflow              : "1.13.1",
             glide                   : "4.9.0",
             glideTransformations    : "2.0.1",
-            rxjava                  : "1.1.1",
-            rxandroid               : "1.0.1",
+            rxjava                  : "2.1.7",
+            rxandroid               : "2.0.1",
             retrofit                : "2.4.0",
             CircularReveal          : "2.1.0",
             library                 : "1.0.5",
@@ -35,15 +34,17 @@ ext {
             annotation      : "androidx.annotation:annotation:${versions.annotation}",
             constraintlayout: "androidx.constraintlayout:constraintlayout:${versions.constraintlayout}",
             legacy          : "androidx.legacy:legacy-support-v4:${versions.legacy}",
+
             room            : "androidx.room:room-runtime:${versions.room}",
             roomComplier    : "androidx.room:room-compiler:${versions.room}",
+            roomRxjava      : "androidx.room:room-rxjava2:${versions.room}",
 
             material        : "com.google.android.material:material:${versions.material}",
 
             tensorflow      : "org.tensorflow:tensorflow-android:${versions.tensorflow}",
 
-            rxjava          : "io.reactivex:rxjava:${versions.rxjava}",
-            rxandroid       : "io.reactivex:rxandroid:${versions.rxandroid}",
+            rxjava          : "io.reactivex.rxjava2:rxjava:${versions.rxjava}",
+            rxandroid       : "io.reactivex.rxjava2:rxandroid:${versions.rxandroid}",
 
             okio            : "com.squareup.okio:okio:${versions.okio}",
             okhttp          : "com.squareup.okhttp3:okhttp:${versions.okhttp}",

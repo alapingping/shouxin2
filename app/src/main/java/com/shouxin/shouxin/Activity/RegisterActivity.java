@@ -57,7 +57,7 @@ public class RegisterActivity extends AppCompatActivity {
                     break;
                 case REGISTER_SUCCESS:
                     Toast.makeText(RegisterActivity.this,msg.obj.toString(),Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(RegisterActivity.this,ModeChoiceActivity.class);
+                    Intent intent = new Intent(RegisterActivity.this,BottomNavigationActivity.class);
                     startActivity(intent);
                     break;
             }

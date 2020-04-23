@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import android.view.ViewGroup;
 import com.shouxin.shouxin.Adapter.MyWordRecyclerViewAdapter;
 import com.shouxin.shouxin.DataModel.Word;
 import com.shouxin.shouxin.R;
-import com.shouxin.shouxin.Activity.dummy.DummyContent;
 
 import java.util.List;
 

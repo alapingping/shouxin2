@@ -14,7 +14,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.shouxin.shouxin.Activity.BottomNavigationActivity;
 import com.shouxin.shouxin.DataModel.Word;
 import com.shouxin.shouxin.R;
@@ -27,12 +26,12 @@ import com.shouxin.shouxin.fragment.WordFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.VH> {
+public class PersonalPageAdapter extends RecyclerView.Adapter<PersonalPageAdapter.VH> {
 
     private ArrayMap<String, Integer> mdata;
     private Context context;
 
-    public MenuAdapter(Context context, ArrayMap<String, Integer> list) {
+    public PersonalPageAdapter(Context context, ArrayMap<String, Integer> list) {
         this.mdata = list;
         this.context = context;
     }
@@ -89,10 +88,15 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.VH> {
 
     private List<Word> getFavoriteWords() {
         List<Word> words = new ArrayList<>();
-        for (Word word:DictionaryFragment.getWords()) {
-            if (word.getCollected() == 1) {
-                words.add(word);
+        if (DictionaryFragment.getWords() != null) {
+            for (Word word:DictionaryFragment.getWords()) {
+                if (word.getCollected() == 1) {
+                    words.add(word);
+                }
             }
+            return words;
+        } else {
+            // 从数据库中读取
         }
         return words;
     }

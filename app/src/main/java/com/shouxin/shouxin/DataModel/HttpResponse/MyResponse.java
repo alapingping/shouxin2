@@ -1,4 +1,4 @@
-package com.shouxin.shouxin.DataModel;
+package com.shouxin.shouxin.DataModel.HttpResponse;
 
 public class MyResponse {
 

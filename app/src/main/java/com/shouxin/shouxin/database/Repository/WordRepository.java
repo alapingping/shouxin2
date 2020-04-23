@@ -3,7 +3,8 @@ package com.shouxin.shouxin.database.Repository;
 import android.app.Application;
 import android.os.AsyncTask;
 
-import androidx.lifecycle.LiveData;
+import io.reactivex.Completable;
+import io.reactivex.Maybe;
 
 import com.shouxin.shouxin.DataModel.Word;
 import com.shouxin.shouxin.database.Dao.WordDao;
@@ -13,53 +14,31 @@ import java.util.List;
 
 public class WordRepository {
 
-    private WordDao mWordDao;
+    private static WordDao sWordDao;
+    private static volatile WordRepository sRepository;
 
-    public WordRepository(Application application){
+    private WordRepository(Application application){
         WordRoomDatabase database = WordRoomDatabase.getDatabase(application);
-        mWordDao = database.wordDao();
+        sWordDao = database.wordDao();
     }
 
-    public List<Word> getAllWords(){
-        return mWordDao.getAllWords();
+    public static WordRepository getWordRepository() {
+        return sRepository;
     }
 
-    public void insert(Word word){
-        new insertAsyncTask(mWordDao).execute(word);
+    public static void init(Application application) {
+        sRepository = new WordRepository(application);
     }
 
-    public void updateWordCollectedStatus(Word word) {
-        new updateAsyncTask(mWordDao).execute(word);
+    public Maybe<List<Word>> getAllWords(){
+        return sWordDao.getAllWords();
     }
 
-    private static class insertAsyncTask extends AsyncTask<Word, Void, Void> {
-
-        private WordDao mAsyncTaskDao;
-
-        insertAsyncTask(WordDao wordDao){
-            this.mAsyncTaskDao = wordDao;
-        }
-
-        @Override
-        protected Void doInBackground(Word... words) {
-            mAsyncTaskDao.insert(words[0]);
-            return null;
-        }
+    public Completable insert(Word word) {
+        return sWordDao.insert(word);
     }
 
-    private static class updateAsyncTask extends AsyncTask<Word, Void, Void> {
-
-        private WordDao mAsyncTaskDao;
-
-        updateAsyncTask(WordDao wordDao){
-            this.mAsyncTaskDao = wordDao;
-        }
-
-        @Override
-        protected Void doInBackground(Word... words) {
-            mAsyncTaskDao.updateWordCollectedStatus(words[0]);
-            return null;
-        }
+    public Completable update(Word word) {
+        return sWordDao.updateWordCollectedStatus(word);
     }
-
 }

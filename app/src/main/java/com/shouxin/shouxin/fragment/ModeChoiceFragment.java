@@ -13,14 +13,14 @@ import android.widget.Button;
 import com.shouxin.shouxin.Activity.CapturePhotoActivity;
 import com.shouxin.shouxin.R;
 import com.shouxin.shouxin.Activity.TakeTrainSetActivity;
+import com.shouxin.shouxin.databinding.FragmentModeChoiceBinding;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ModeChoiceFragment extends Fragment {
 
-    Button takePicBtn;
-    Button takeTrainsetBtn;
+    private FragmentModeChoiceBinding binding;
 
     private static volatile ModeChoiceFragment modeChoiceFragment;
 
@@ -43,25 +43,17 @@ public class ModeChoiceFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_mode_choice, container, false);
-        takePicBtn = view.findViewById(R.id.picturerecog);
-        takePicBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), CapturePhotoActivity.class);
-                startActivity(intent);
-            }
+        binding =  FragmentModeChoiceBinding.inflate(inflater, container, false);
+        binding.picturerecog.setOnClickListener(view -> {
+            Intent intent = new Intent(getActivity(), CapturePhotoActivity.class);
+            startActivity(intent);
         });
 
-        takeTrainsetBtn = view.findViewById(R.id.taketrainset);
-        takeTrainsetBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), TakeTrainSetActivity.class);
-                startActivity(intent);
-            }
+        binding.taketrainset.setOnClickListener(view -> {
+            Intent intent = new Intent(getActivity(), TakeTrainSetActivity.class);
+            startActivity(intent);
         });
 
-        return view;
+        return binding.getRoot();
     }
 }

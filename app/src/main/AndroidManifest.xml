@@ -47,9 +47,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activity.ModeChoiceActivity"
-            android:label="模式选择" />
-        <activity
             android:name=".Activity.RegisterActivity"
             android:label="注册">
         </activity>

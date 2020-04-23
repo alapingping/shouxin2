@@ -1,11 +1,9 @@
-package com.shouxin.shouxin.Activity.dummy;
+package com.shouxin.shouxin.dummy;
 
 import com.shouxin.shouxin.DataModel.Word;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Helper class for providing sample content for user interfaces created by

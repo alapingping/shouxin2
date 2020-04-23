@@ -50,6 +50,7 @@ dependencies {
     implementation rootProject.ext.dependencies.legacy
     implementation rootProject.ext.dependencies.room
     annotationProcessor rootProject.ext.dependencies.roomComplier
+    implementation rootProject.ext.dependencies.roomRxjava
 
     implementation rootProject.ext.dependencies.material
 

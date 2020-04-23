@@ -21,6 +21,8 @@ import com.google.android.material.bottomnavigation.LabelVisibilityMode;
 import com.shouxin.shouxin.DataModel.Word;
 import com.shouxin.shouxin.R;
 import com.shouxin.shouxin.Utils.Util;
+import com.shouxin.shouxin.database.Repository.WordRepository;
+import com.shouxin.shouxin.database.Room.WordRoomDatabase;
 import com.shouxin.shouxin.databinding.ActivityBottomNavigationBinding;
 import com.shouxin.shouxin.fragment.CommunityFragment;
 import com.shouxin.shouxin.fragment.DictionaryFragment;
@@ -50,15 +52,19 @@ public class BottomNavigationActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
             case R.id.navigation_home:
                 showFragment(ft, 0);
+                navigationBinding.navigationToobar.setTitle("主页");
                 break;
             case R.id.navigation_study:
                 showFragment(ft, 1);
+                navigationBinding.navigationToobar.setTitle("词典");
                 break;
             case R.id.navigation_recognition:
                 showFragment(ft, 2);
+                navigationBinding.navigationToobar.setTitle("识别");
                 break;
             case R.id.navigation_personal:
                 showFragment(ft, 3);
+                navigationBinding.navigationToobar.setTitle("个人中心");
                 break;
             default:
                 break;
@@ -72,15 +78,10 @@ public class BottomNavigationActivity extends AppCompatActivity implements
         navigationBinding = ActivityBottomNavigationBinding.inflate(LayoutInflater.from(this));
         setContentView(navigationBinding.getRoot());
         initFragments();
+        // 初始化数据库对象
+        WordRepository.init(getApplication());
         navigationBinding.navigation.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_LABELED);
         navigationBinding.navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-//        // 设置状态栏透明度
-//        if (Build.VERSION.SDK_INT >= 21) {
-//            getWindow().setFlags(
-//                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-//                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//        }
 
         // 判断网络状态
         if (Util.NetworkUtil.isNetworkConnected(this)) {
@@ -151,5 +152,11 @@ public class BottomNavigationActivity extends AppCompatActivity implements
             }
         }
         ft.commit();
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        WordRoomDatabase.getDatabase(getApplicationContext()).close();
     }
 }

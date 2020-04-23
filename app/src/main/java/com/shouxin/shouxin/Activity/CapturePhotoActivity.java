@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
@@ -25,6 +26,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.shouxin.shouxin.R;
+import com.shouxin.shouxin.databinding.ActivityCapturePhotoBinding;
 import com.shouxin.shouxin.ternsorflow.MyClassifer;
 import com.shouxin.shouxin.ternsorflow.Recognization;
 import com.shouxin.shouxin.ternsorflow.Classifier;
@@ -53,6 +55,8 @@ public class CapturePhotoActivity extends AppCompatActivity {
 
     private boolean isPreview = false;
 
+    // viewbinding
+    private ActivityCapturePhotoBinding binding;
     //线程池管理
     private Executor executor;
     //分类器对象
@@ -60,11 +64,11 @@ public class CapturePhotoActivity extends AppCompatActivity {
     //输出标志
     private final String TAG = "----this is result:";
     //输出结果控件
-    TextView result;
+    private TextView result;
     //拼接结果
-    TextView sentence;
+    private TextView sentence;
 
-    Button displaybtn;
+    private Button displaybtn;
 
     public Camera getCamera() {
 
@@ -91,7 +95,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
     //词语出现次数
     private int appearTimes = 0;
 
-    public static String[] MEANING = new String[]{
+    public static final String[] MEANING = new String[]{
             "拥有","山","不","一起","爱",
             "好的", "你","我","曾经","大海",
             "和","吗", "可以","帮助","跨过",
@@ -101,7 +105,8 @@ public class CapturePhotoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_capture_photo);
+        binding = ActivityCapturePhotoBinding.inflate(LayoutInflater.from(this));
+        setContentView(binding.getRoot());
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
         DisplayMetrics dm = new DisplayMetrics();
@@ -111,37 +116,42 @@ public class CapturePhotoActivity extends AppCompatActivity {
         sView = this.findViewById(R.id.surfaceView);
         sHolder = sView.getHolder();
         sHolder.addCallback(new Callback() {
-            @Override			public void surfaceDestroyed(SurfaceHolder holder) {				if(camera != null){					camera.setPreviewCallback(null);					if(isPreview)						camera.stopPreview();					camera.release();					camera = null;				}			}
-            @Override			public void surfaceCreated(SurfaceHolder holder) {				initCamera();			}
-            @Override			public void surfaceChanged(SurfaceHolder holder, int format, int width,					int height) {										}		});
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//
-//
-//            }
-//        });
-        wordSet = new ArrayList<>();
-        displaybtn = findViewById(R.id.displayrst);
-        displaybtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                sentence.setText("当前结果:" + getSentence(wordSet));
-                wordSet = new ArrayList<>();
+            public void surfaceDestroyed(SurfaceHolder holder) {
+                if(camera != null) {
+                    camera.setPreviewCallback(null);
+                    if(isPreview)		 {
+                        camera.stopPreview();
+                    }
+                    camera.release();
+                    camera = null;
+                }
+            }
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+                initCamera();
+            }
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width,	int height) {
+
             }
         });
 
-        sentence = findViewById(R.id.sentence);
-        result = findViewById(R.id.result);
+        wordSet = new ArrayList<>();
+        displaybtn = binding.displayrst;
+        displaybtn.setOnClickListener(view -> {
+            sentence.setText("当前结果:" + getSentence(wordSet));
+            wordSet = new ArrayList<>();
+        });
+
+        sentence = binding.sentence;
+        result = binding.result;
     }
 
     private void initCamera(){
-        if(!isPreview)
+        if(!isPreview) {
             camera = Camera.open();
+        }
         if(camera != null && !isPreview){
             try {
                 Camera.Parameters parameters = camera.getParameters();
@@ -149,12 +159,14 @@ public class CapturePhotoActivity extends AppCompatActivity {
 
                 parameters.setPreviewFpsRange(10, 20);
                 //parameters.setPreviewFrameRate(1);
-                if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE)
-                {				      parameters.set("orientation", "portrait");
-                    parameters.set("rotation", 90); // 镜头角度转90度（默认摄像头是横拍
+                if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
+                    parameters.set("orientation", "portrait");
+                    // 镜头角度转90度（默认摄像头是横拍
+                    parameters.set("rotation", 90);
                     camera.setDisplayOrientation(90);
                 } else{
-                    parameters.set("orientation", "landscape"); 				      camera.setDisplayOrientation(0);
+                    parameters.set("orientation", "landscape");
+                    camera.setDisplayOrientation(0);
                 }
                 //开启相机预览界面
                 camera.setPreviewDisplay(sHolder);
@@ -196,7 +208,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
             }
 
             // 初始化线程池
-            executor = new ScheduledThreadPoolExecutor(1, new ThreadFactory() {
+            executor = new ScheduledThreadPoolExecutor(4, new ThreadFactory() {
                 @Override
                 public Thread newThread(@NonNull Runnable r) {
                     Thread thread = new Thread(r);
@@ -210,7 +222,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
     };
 
 
-    //内部StreamIt类???
+    // 预览界面回调类
     class StreamIt implements  Camera.PreviewCallback{
         private String ipname;
         //帧序号

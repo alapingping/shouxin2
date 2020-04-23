@@ -1,11 +1,20 @@
 package com.shouxin.shouxin;
 
+import android.app.Application;
 import android.content.Context;
+
+import com.shouxin.shouxin.DataModel.Word;
+import com.shouxin.shouxin.database.Repository.WordRepository;
+import com.shouxin.shouxin.database.Room.WordRoomDatabase;
+
+import androidx.room.Room;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -19,8 +28,7 @@ public class ExampleInstrumentedTest {
     @Test
     public void useAppContext() throws Exception {
         // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
-
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assertEquals("com.shouxin.shouxin", appContext.getPackageName());
     }
 }

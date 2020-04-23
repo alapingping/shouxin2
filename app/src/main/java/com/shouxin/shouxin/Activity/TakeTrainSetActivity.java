@@ -86,9 +86,24 @@ public class TakeTrainSetActivity extends AppCompatActivity {
         sView = this.findViewById(R.id.surfaceView);
         sHolder = sView.getHolder();
         sHolder.addCallback(new SurfaceHolder.Callback() {
-            @Override			public void surfaceDestroyed(SurfaceHolder holder) {				if(camera != null){					camera.setPreviewCallback(null);					if(isPreview)						camera.stopPreview();					camera.release();					camera = null;				}			}
-            @Override			public void surfaceCreated(SurfaceHolder holder) {				initCamera();			}
-            @Override			public void surfaceChanged(SurfaceHolder holder, int format, int width,					int height) {										}		});
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+                if(camera != null){
+                    camera.setPreviewCallback(null);
+                    if(isPreview)
+                        camera.stopPreview();
+                    camera.release();
+                    camera = null;
+                }
+            }
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+                initCamera();
+            }
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width,	int height) {
+            }
+        });
 
         pictureOrderText = findViewById(R.id.order);
 
@@ -128,8 +143,9 @@ public class TakeTrainSetActivity extends AppCompatActivity {
     }
 
     private void initCamera(){
-        if(!isPreview)
+        if(!isPreview) {
             camera = Camera.open();
+        }
         if(camera != null && !isPreview){
             try {
                 Camera.Parameters parameters = camera.getParameters();
@@ -155,7 +171,6 @@ public class TakeTrainSetActivity extends AppCompatActivity {
                 ((AutoFocusCallBack) autoFocusCallback).setHandler(autoFoucusHandler, autoFocusMessge);
 
             } catch (IOException e) {
-
                 e.printStackTrace();
             }
             isPreview = true;
@@ -163,7 +178,7 @@ public class TakeTrainSetActivity extends AppCompatActivity {
     }
 
 
-    //实现PreviewCallback类
+    // 实现PreviewCallback类
     class StreamIt implements Camera.PreviewCallback{
         private String ipname;
         //帧序号
@@ -196,11 +211,11 @@ public class TakeTrainSetActivity extends AppCompatActivity {
                             Bitmap sizeBitmap = Bitmap.createScaledBitmap(rotaBitmap, 600, 800, true);
                             Bitmap rectBmp = Bitmap.createBitmap(sizeBitmap, 75, 250, 400, 400);
 
-                            //利用时间戳为图片命名防止覆盖
+                            // 利用时间戳为图片命名防止覆盖
                             String pictureName = String.valueOf(System.currentTimeMillis()) + ".jpg";
                             final InputStream isBm = new ByteArrayInputStream(stream.toByteArray());
 
-                            //利用反射调用工具类方法存储图片
+                            // 利用反射调用工具类方法存储图片
                             Class<?> clazz = Class.forName("com.shouxin.shouxin.Utils.PictureProcessUtil");
                             PictureProcessUtil processUtil = (PictureProcessUtil) clazz.newInstance();
                             Method savePictureMethod = clazz.getMethod("saveBitmap", Bitmap.class, String.class);
@@ -234,6 +249,12 @@ public class TakeTrainSetActivity extends AppCompatActivity {
             Log.d("-----callback info:","success");
             handler.sendEmptyMessageDelayed(autoFocusMessage, 500L);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        this.camera.release();
     }
 
 }
