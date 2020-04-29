@@ -33,8 +33,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_toolbar_share_black_24dp" />
-                            <entry key="sourceFile" value="C:\Users\16301\Downloads\关于我们.svg" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_zhuanfa" />
+                            <entry key="sourceFile" value="C:\Users\16301\Downloads\转发.svg" />
                           </map>
                         </option>
                       </PersistentState>

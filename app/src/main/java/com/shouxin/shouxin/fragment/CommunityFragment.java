@@ -23,8 +23,10 @@ import com.shouxin.shouxin.API.Client;
 import com.shouxin.shouxin.API.Service;
 import com.shouxin.shouxin.Activity.EditMessageActivity;
 import com.shouxin.shouxin.Adapter.CommunityAdapter;
+import com.shouxin.shouxin.Adapter.CommunityDividerItemDecoration;
 import com.shouxin.shouxin.DataModel.Message;
 import com.shouxin.shouxin.databinding.FragmentCommunityBinding;
+import com.shouxin.shouxin.dummy.DummyMessage;
 import com.yalantis.phoenix.PullToRefreshView;
 
 import org.json.JSONArray;
@@ -103,8 +105,9 @@ public class CommunityFragment extends Fragment implements
             messages = new ArrayList<>();
             lastMessages = null;
             getAllMessages();
-            mAdapter = new CommunityAdapter(messages, getActivity());
+            mAdapter = new CommunityAdapter(DummyMessage.getMessages(), getActivity());
             communityBinding.recycler.setLayoutManager(new LinearLayoutManager(getContext()));
+            communityBinding.recycler.addItemDecoration(new CommunityDividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         } else {
             messages = savedInstanceState.getParcelableArrayList("data");
             lastMessages = savedInstanceState.getString("lastMessages");

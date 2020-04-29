@@ -21,9 +21,9 @@ public class RvDividerItemDecoration extends RecyclerView.ItemDecoration{
     public static final int HORIZONTAL_LIST = LinearLayoutManager.HORIZONTAL;
     public static final int VERTICAL_LIST = LinearLayoutManager.VERTICAL;
 
-    private Drawable divider;
+    protected Drawable divider;
 
-    private int orientation;
+    protected int orientation;
 
 
     public RvDividerItemDecoration(Context context, int orientation) {
@@ -43,7 +43,6 @@ public class RvDividerItemDecoration extends RecyclerView.ItemDecoration{
     @Override
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
 //        Log.v(TAG, "onDraw");
-
         if (orientation == VERTICAL_LIST) {
             drawForVertical(c, parent);
         } else {
@@ -52,14 +51,13 @@ public class RvDividerItemDecoration extends RecyclerView.ItemDecoration{
     }
 
     //获取Item的位置，然后为每个item定位画线
-    private void drawForVertical(Canvas c, RecyclerView parent) {
+    protected void drawForVertical(Canvas c, RecyclerView parent) {
         final int left = parent.getPaddingLeft();
         final int right = parent.getWidth() - parent.getPaddingRight();
 
         final int childCount = parent.getChildCount();
         for ( int i = 0; i < childCount - 1; i++ ) {
             final View child = parent.getChildAt(i);
-            RecyclerView recyclerView = new RecyclerView(parent.getContext());
             final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
             final int top = child.getBottom() + params.bottomMargin;
             final int bottom = top + divider.getIntrinsicHeight();

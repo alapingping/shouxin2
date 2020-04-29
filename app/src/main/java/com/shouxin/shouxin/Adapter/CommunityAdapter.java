@@ -6,6 +6,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,15 +31,19 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.MyVi
         this.context = context;
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder{
-        public final TextView text_username;
-        public final TextView text_content;
-        public final TextView text_time;
-        public MyViewHolder(View itemView) {
+     static class MyViewHolder extends RecyclerView.ViewHolder{
+         final TextView text_username;
+         final TextView text_content;
+         final TextView text_time;
+         final GridLayout picture_list;
+         final int viewWidth;
+         MyViewHolder(View itemView) {
             super(itemView);
             text_username = itemView.findViewById(R.id.username);
-            text_content = itemView.findViewById(R.id.text_content);
+            text_content = itemView.findViewById(R.id.text_community_content);
             text_time = itemView.findViewById(R.id.text_time);
+            picture_list = itemView.findViewById(R.id.community_picture_list);
+            viewWidth = itemView.getWidth();
         }
     }
 
@@ -55,13 +62,7 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.MyVi
         holder.text_content.setText(message.getContent());
         String time = changeTimeFormat(message.getTime());
         holder.text_time.setText(time);
-//        holder.textView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                //点击事件
-//                Toast.makeText(context, String.valueOf(position), Toast.LENGTH_SHORT).show();
-//            }
-//        });
+
     }
 
     @Override
