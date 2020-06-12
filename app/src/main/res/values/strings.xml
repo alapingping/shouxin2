@@ -60,8 +60,13 @@
     <string name="toolbar_menu_back">返回</string>
     <string name="toolbar_menu_favorite">收藏</string>
     <string name="toolbar_menu_share">分享</string>
+    <string name="toolbar_menu_search">搜索</string>
+
 
     <string name="groupFold">fold</string>
     <string name="groupExpended">expended</string>
 
+    <!-- this label for single word activity-->
+    <string name="word_name">名称:%s</string>
+    <string name="word_description">描述:%s</string>
 </resources>

@@ -1,21 +1,13 @@
 package com.shouxin.shouxin.Activity;
 
-import android.app.Activity;
-import android.graphics.drawable.Drawable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.Toolbar;
-import io.reactivex.Scheduler;
 import io.reactivex.schedulers.Schedulers;
 
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.shouxin.shouxin.DataModel.Word;
@@ -24,13 +16,6 @@ import com.shouxin.shouxin.Utils.Util;
 import com.shouxin.shouxin.database.Repository.WordRepository;
 import com.shouxin.shouxin.databinding.ActivitySignleWordBinding;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
 
 public class SingleWordActivity extends AppCompatActivity {
 
@@ -38,8 +23,6 @@ public class SingleWordActivity extends AppCompatActivity {
     private Word word;
     // 当前activity的binding
     private ActivitySignleWordBinding binding;
-    // 是否已收藏
-    private boolean collected;
     // 收藏状态是否更改
     private boolean collectedChangeFlag;
 
@@ -55,8 +38,8 @@ public class SingleWordActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         word = (Word) bundle.getSerializable("word");
 
-        binding.wordTitle.setText(word.getName());
-        binding.wordDescription.setText(word.getDescription());
+        binding.wordTitle.setText(getString(R.string.word_name, word.getName()));
+        binding.wordDescription.setText(getString(R.string.word_description, word.getDescription()));
         // 使得toolbar支持监听
         setSupportActionBar(binding.toolbar);
         binding.toolbar.setTitle(R.string.toolbar_menu_back);
@@ -69,17 +52,16 @@ public class SingleWordActivity extends AppCompatActivity {
                     if (word.getCollected() == 0){
                         // 未收藏
                         Util.showMessage(this,"已添加到我的收藏");
-                        item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_24dp));
+                        item.setIcon(getDrawable(R.drawable.ic_favorite_24dp));
                         word.setCollected(1);
                         collectedChangeFlag = !collectedChangeFlag;
                     } else {
                         // 已收藏
                         Util.showMessage(this,"已从我的收藏中移除");
-                        item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_border_white_24dp));
+                        item.setIcon(getDrawable(R.drawable.ic_favorite_border_white_24dp));
                         word.setCollected(0);
                         collectedChangeFlag = !collectedChangeFlag;
                     }
-
                     break;
                 case R.id.toolbar_share:
                     break;
@@ -94,6 +76,33 @@ public class SingleWordActivity extends AppCompatActivity {
                 .into(binding.wordImage);
 
     }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_toolbar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (word.getCollected() == 1) {
+            menu.getItem(1).setIcon(getDrawable(R.drawable.ic_favorite_24dp));
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (collectedChangeFlag) {
+            WordRepository.getWordRepository().update(word)
+                    .subscribeOn(Schedulers.io());
+        }
+        super.onDestroy();
+    }
+}
+
+
 
 //    public void getNetworkData(String WordName) throws IOException {
 //
@@ -121,27 +130,3 @@ public class SingleWordActivity extends AppCompatActivity {
 //            e.printStackTrace();
 //        }
 //    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_toolbar, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        if (word.getCollected() == 1) {
-            menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_favorite_24dp));
-        }
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (collectedChangeFlag) {
-            WordRepository.getWordRepository().update(word)
-                    .subscribeOn(Schedulers.io());
-        }
-        super.onDestroy();
-    }
-}

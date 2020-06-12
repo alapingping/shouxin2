@@ -78,8 +78,7 @@ public class BottomNavigationActivity extends AppCompatActivity implements
         navigationBinding = ActivityBottomNavigationBinding.inflate(LayoutInflater.from(this));
         setContentView(navigationBinding.getRoot());
         initFragments();
-        // 初始化数据库对象
-        WordRepository.init(getApplication());
+
         navigationBinding.navigation.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_LABELED);
         navigationBinding.navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 

@@ -101,7 +101,7 @@ public interface Classifier {
 
     void enableStatLogging(final boolean debug);
 
-    String getStatString();
+        String getStatString();
 
     void close();
 }

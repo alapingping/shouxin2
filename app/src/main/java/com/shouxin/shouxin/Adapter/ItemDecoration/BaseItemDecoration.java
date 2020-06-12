@@ -1,16 +1,16 @@
-package com.shouxin.shouxin.Adapter;
+package com.shouxin.shouxin.Adapter.ItemDecoration;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.view.View;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
-import android.widget.LinearLayout;
 
-public class RvDividerItemDecoration extends RecyclerView.ItemDecoration{
+public abstract class BaseItemDecoration  extends RecyclerView.ItemDecoration{
 
     public final String TAG = this.getClass().getSimpleName();
 
@@ -26,7 +26,7 @@ public class RvDividerItemDecoration extends RecyclerView.ItemDecoration{
     protected int orientation;
 
 
-    public RvDividerItemDecoration(Context context, int orientation) {
+    public BaseItemDecoration(Context context, int orientation) {
         final TypedArray typedArray = context.obtainStyledAttributes(ATTRS);
         divider = typedArray.getDrawable(0);
         typedArray.recycle();
@@ -42,7 +42,6 @@ public class RvDividerItemDecoration extends RecyclerView.ItemDecoration{
 
     @Override
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
-//        Log.v(TAG, "onDraw");
         if (orientation == VERTICAL_LIST) {
             drawForVertical(c, parent);
         } else {
@@ -51,22 +50,9 @@ public class RvDividerItemDecoration extends RecyclerView.ItemDecoration{
     }
 
     //获取Item的位置，然后为每个item定位画线
-    protected void drawForVertical(Canvas c, RecyclerView parent) {
-        final int left = parent.getPaddingLeft();
-        final int right = parent.getWidth() - parent.getPaddingRight();
+    protected abstract void drawForVertical(Canvas c, RecyclerView parent);
 
-        final int childCount = parent.getChildCount();
-        for ( int i = 0; i < childCount - 1; i++ ) {
-            final View child = parent.getChildAt(i);
-            final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
-            final int top = child.getBottom() + params.bottomMargin;
-            final int bottom = top + divider.getIntrinsicHeight();
-            divider.setBounds(left, top, right, bottom);
-            divider.draw(c);
-        }
-    }
-
-    private void drawForHorizontal(Canvas c, RecyclerView parent) {
+    protected void drawForHorizontal(Canvas c, RecyclerView parent) {
         final int top = parent.getPaddingTop();
         final int bottom = parent.getHeight() - parent.getPaddingBottom();
 
@@ -91,4 +77,5 @@ public class RvDividerItemDecoration extends RecyclerView.ItemDecoration{
             outRect.set(0, 0, divider.getIntrinsicWidth(), 0);
         }
     }
+
 }

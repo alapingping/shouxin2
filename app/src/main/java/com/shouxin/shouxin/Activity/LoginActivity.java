@@ -2,7 +2,6 @@ package com.shouxin.shouxin.Activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,7 +31,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 
 
-public class Login_Activity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     private static final int SERVER_ERROR = 1;
     private static final int NO_SUCH_USER = 2;
@@ -54,7 +53,7 @@ public class Login_Activity extends AppCompatActivity {
 
         loginBinding.register.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         loginBinding.register.setOnClickListener(v -> {
-            Intent intent = new Intent(Login_Activity.this,RegisterActivity.class);
+            Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
             startActivity(intent);
         });
 

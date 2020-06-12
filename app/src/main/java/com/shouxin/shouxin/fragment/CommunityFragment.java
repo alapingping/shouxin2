@@ -1,7 +1,6 @@
 package com.shouxin.shouxin.fragment;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,18 +14,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.etsy.android.grid.StaggeredGridView;
 import com.shouxin.shouxin.API.Client;
 import com.shouxin.shouxin.API.Service;
 import com.shouxin.shouxin.Activity.EditMessageActivity;
+import com.shouxin.shouxin.Activity.MessageDetailActivity;
 import com.shouxin.shouxin.Adapter.CommunityAdapter;
-import com.shouxin.shouxin.Adapter.CommunityDividerItemDecoration;
+import com.shouxin.shouxin.Adapter.ItemDecoration.CommunityDividerItemDecoration;
 import com.shouxin.shouxin.DataModel.Message;
 import com.shouxin.shouxin.databinding.FragmentCommunityBinding;
-import com.shouxin.shouxin.dummy.DummyMessage;
+import com.shouxin.shouxin.dummy.DummyMessages;
 import com.yalantis.phoenix.PullToRefreshView;
 
 import org.json.JSONArray;
@@ -105,7 +103,7 @@ public class CommunityFragment extends Fragment implements
             messages = new ArrayList<>();
             lastMessages = null;
             getAllMessages();
-            mAdapter = new CommunityAdapter(DummyMessage.getMessages(), getActivity());
+            mAdapter = new CommunityAdapter(DummyMessages.getMessages(), getActivity());
             communityBinding.recycler.setLayoutManager(new LinearLayoutManager(getContext()));
             communityBinding.recycler.addItemDecoration(new CommunityDividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         } else {
@@ -162,6 +160,8 @@ public class CommunityFragment extends Fragment implements
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         Toast.makeText(getActivity(), "Item Clicked: " + position, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getActivity(), MessageDetailActivity.class);
+        startActivity(intent);
     }
 
     public static CommunityFragment getInstance(){

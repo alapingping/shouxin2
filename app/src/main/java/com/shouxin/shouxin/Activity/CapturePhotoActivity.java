@@ -1,5 +1,9 @@
 package com.shouxin.shouxin.Activity;
 
+import android.Manifest;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,13 +12,18 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.MessageQueue;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +35,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.shouxin.shouxin.R;
+import com.shouxin.shouxin.Utils.PermissionManager;
 import com.shouxin.shouxin.databinding.ActivityCapturePhotoBinding;
 import com.shouxin.shouxin.ternsorflow.MyClassifer;
 import com.shouxin.shouxin.ternsorflow.Recognization;
@@ -41,7 +51,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 
-public class CapturePhotoActivity extends AppCompatActivity {
+public class CapturePhotoActivity extends AppCompatActivity implements PermissionManager {
     //预览界面对象
     private SurfaceView sView = null;
     private String ipName = null;
@@ -107,8 +117,6 @@ public class CapturePhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityCapturePhotoBinding.inflate(LayoutInflater.from(this));
         setContentView(binding.getRoot());
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         screenWidth = dm.widthPixels;
@@ -146,6 +154,8 @@ public class CapturePhotoActivity extends AppCompatActivity {
 
         sentence = binding.sentence;
         result = binding.result;
+
+        requestPermission();
     }
 
     private void initCamera(){
@@ -238,7 +248,6 @@ public class CapturePhotoActivity extends AppCompatActivity {
             frameOrder++;
             if(frameOrder%15==0 || frameOrder == 0){
                 Camera.Size size = camera.getParameters().getPreviewSize();
-                System.out.println(ipname);
                 try {
                     YuvImage image = new YuvImage(data, ImageFormat.NV21, size.width, size.height, null);
                     if (image != null) {
@@ -400,6 +409,65 @@ public class CapturePhotoActivity extends AppCompatActivity {
         NumberFormat nf = NumberFormat.getCurrencyInstance();
         nf.setMaximumFractionDigits(2);
         return nf.format(num).substring(1);
+    }
+
+    @Override
+    public void requestPermission() {
+        int permission = ActivityCompat.checkSelfPermission(this, CAMERA_PERMISSION);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{CAMERA_PERMISSION},
+                    CAMERA_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE
+        && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.CAMERA)) {
+                // 用户先择了禁止授予权限
+                showNeedCameraPermissionDialog();
+            } else {
+                // 用户选择了被禁止后不再提示
+                showMissingStoragePermissionDialog();
+            }
+        }
+    }
+
+    private void showMissingStoragePermissionDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("相机权限获取失败")
+                .setMessage("需要开启相机权限才能使用识别功能")
+                .setPositiveButton("去设置", (dialog, which) -> startAppSettings())
+                .setNegativeButton("取消", (dialog, which) -> finish())
+                .setCancelable(false)
+                .show();
+    }
+
+    private void showNeedCameraPermissionDialog() {
+        new AlertDialog.Builder(this)
+                .setMessage("摄像头权限被关闭，请开启权限后重试")
+                .setPositiveButton("确定", (dialog, which) -> requestPermission())
+                .setNegativeButton("取消", (dialog, which) ->  finish())
+                .create()
+                .show();
+    }
+
+
+    @Override
+    public void startAppSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        intent.setData(Uri.parse(PACKAGE_URL_SCHEME + getPackageName()));
+        startActivityForResult(intent, OPEN_SETTING_REQUEST_COED);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        requestPermission();
     }
 
 }

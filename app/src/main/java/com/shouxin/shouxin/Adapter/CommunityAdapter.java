@@ -62,7 +62,6 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.MyVi
         holder.text_content.setText(message.getContent());
         String time = changeTimeFormat(message.getTime());
         holder.text_time.setText(time);
-
     }
 
     @Override

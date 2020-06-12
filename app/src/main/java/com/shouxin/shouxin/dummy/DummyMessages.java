@@ -4,7 +4,7 @@ import com.shouxin.shouxin.DataModel.Message;
 
 import java.util.ArrayList;
 
-public class DummyMessage {
+public class DummyMessages {
 
     private static ArrayList<Message> messages;
 

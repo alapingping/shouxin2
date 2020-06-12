@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.shouxin.shouxin.DataModel.Word;
 import com.shouxin.shouxin.R;
-import com.shouxin.shouxin.database.DaoImpl.ItemEntryDaoImpl;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -115,8 +114,6 @@ public class SearchFragment extends Fragment {
     }
 
     public void StoreData(Word word){
-        ItemEntryDaoImpl iedi = new ItemEntryDaoImpl(getContext());
-        iedi.add(word);
     }
 
     private SearchView.OnQueryTextListener listener = new SearchView.OnQueryTextListener(){

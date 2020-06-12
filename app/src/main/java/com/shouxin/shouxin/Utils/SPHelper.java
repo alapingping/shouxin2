@@ -20,8 +20,19 @@ public class SPHelper {
 
     public static String getUsername(Context context) {
         SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        String s = preferences.getString("username", null);
-        return s;
+        return preferences.getString("username", null);
+    }
+
+    public static void setInitStatus(Context context, boolean status) {
+        SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("initialized", status);
+        editor.apply();
+    }
+
+    public static boolean getInitStatus(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        return preferences.getBoolean("initialized", false);
     }
 
 }

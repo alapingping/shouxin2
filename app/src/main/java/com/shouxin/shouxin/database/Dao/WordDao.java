@@ -24,6 +24,13 @@ public interface WordDao {
     Completable insert(Word word);
 
     /**
+     * 向数据库中插入数据
+     * @param words 将要被插入到数据库中的词语
+     */
+    @Insert
+    Completable insert(List<Word> words);
+
+    /**
      * 删除数据库中的全部数据
      */
     @Query("delete from WORD")

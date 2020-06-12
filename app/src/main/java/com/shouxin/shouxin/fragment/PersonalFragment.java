@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.shouxin.shouxin.Adapter.PersonalPageAdapter;
-import com.shouxin.shouxin.Adapter.RvDividerItemDecoration;
+import com.shouxin.shouxin.Adapter.ItemDecoration.RvDividerItemDecoration;
 import com.shouxin.shouxin.R;
 import com.shouxin.shouxin.Utils.SPHelper;
 import com.shouxin.shouxin.databinding.FragmentPersonalBinding;

@@ -34,8 +34,16 @@ public class WordRepository {
         return sWordDao.getAllWords();
     }
 
+    public Completable deleteAll() {
+        return sWordDao.deleteAll();
+    }
+
     public Completable insert(Word word) {
         return sWordDao.insert(word);
+    }
+
+    public Completable insert(List<Word> words) {
+        return sWordDao.insert(words);
     }
 
     public Completable update(Word word) {

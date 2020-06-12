@@ -1,9 +1,10 @@
 package com.shouxin.shouxin.fragment;
 
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +18,7 @@ import android.view.ViewGroup;
 
 import com.shouxin.shouxin.API.Client;
 import com.shouxin.shouxin.API.Service;
-import com.shouxin.shouxin.dummy.DummyContent;
+import com.shouxin.shouxin.dummy.DummyWords;
 import com.shouxin.shouxin.Adapter.DictionartAdapter;
 import com.shouxin.shouxin.DataModel.Word;
 import com.shouxin.shouxin.database.Repository.WordRepository;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
@@ -52,6 +53,8 @@ public class DictionaryFragment extends Fragment {
     private static List<Word> words;
     private DictionartAdapter mAdapter;
 
+    private CompositeDisposable compositeDisposable;
+
     public static DictionaryFragment getInstance(){
         if (fragment == null) {
             synchronized (DictionaryFragment.class) {
@@ -65,11 +68,11 @@ public class DictionaryFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentDictionaryBinding.inflate(inflater, container, false);
         datas = new ArrayMap<String, Integer>();
-
+        compositeDisposable = new CompositeDisposable();
         getAllWords();
         RecyclerView rv = binding.recycler;
 
@@ -82,9 +85,8 @@ public class DictionaryFragment extends Fragment {
         return binding.getRoot();
     }
 
-    @SuppressLint("CheckResult")
     private void getAllWords() {
-        WordRepository.getWordRepository().getAllWords()
+        compositeDisposable.add(WordRepository.getWordRepository().getAllWords()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -94,13 +96,12 @@ public class DictionaryFragment extends Fragment {
                                 if (words.size() == 0) {
                                     getWordsFromServer();
                                 } else {
-                                    datas.put("字母", DummyContent.getWords());
-                                    mAdapter.setData(datas);
-//                                  getWordsFromLocal();
+                                    DictionaryFragment.words = words;
+                                    getWordsFromLocal();
                                 }
                             }
                         }
-                );
+                ));
     }
 
     private void getWordsFromServer() {
@@ -124,7 +125,7 @@ public class DictionaryFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                datas.put("字母", DummyContent.getWords());
+                datas.put("字母", DummyWords.getWords());
                 mAdapter.setData(datas);
             }
         });
@@ -154,12 +155,6 @@ public class DictionaryFragment extends Fragment {
     }
 
     private void getWordsFromLocal() {
-
-        if (words.size() == 0) {
-            datas.put("字母", DummyContent.getWords());
-            mAdapter.setData(datas);
-            return;
-        }
 
         String curCategory = words.get(0).getCategory();
         List<Word> subWords = new ArrayList<>();
@@ -212,6 +207,7 @@ public class DictionaryFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         words = null;
+        compositeDisposable.dispose();
     }
 
 }
